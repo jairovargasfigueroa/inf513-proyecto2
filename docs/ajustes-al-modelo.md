@@ -66,3 +66,23 @@ Vienen del sistema vía correo (Proyecto 1) o protegen el acceso al sistema web:
 - A5: solo el autor o el Jefe de Prensa modifican la nota, su guion y sus rótulos.
 - R25: la duración estimada es la lectura (palabras ÷ ritmo) más el video y el SOT del material.
 - Para redactar se necesita una ficha de personal activa; una nota que está en una escaleta no se da de baja.
+
+## Reglas de negocio del CU-06 (vienen del sistema vía correo)
+
+- R16: un horario de grilla no cruza la medianoche (como máximo hasta 24:00).
+- R17: un horario no choca con otro del mismo día si sus vigencias se cruzan (409).
+- R18: una plantilla está lista con `cantidad_bloques − 1` cortes, numerados sin huecos, sin solaparse y dentro de la duración.
+- R19: los cortes y la estructura de una plantilla no cambian mientras tenga escaletas en borrador.
+- R20: una escaleta por horario y fecha; grilla y plantilla del mismo programa, fecha dentro del día y la vigencia, plantilla lista.
+- R21: al generar la escaleta se crean sus cortes; no se agregan, mueven ni dan de baja a mano.
+- R22: el orden es único dentro del bloque; reordenar renumera el bloque.
+- R23 y R24: solo entran notas aprobadas y una nota no se repite en la misma emisión.
+- R25 y R26: duración, acumulado, hora de salida y balance por bloque salen de las vistas; flotados y bajas no suman.
+- Estados: borrador → cerrada (con la lista de control completa: 422 si no) → emitida (con hora y duración reales;
+  sus notas pasan a emitidas). Una cerrada se puede reabrir.
+
+## Diferencias con el documento que conviene revisar
+
+- `onReordenar(arrastrar)` del Editor de Escaleta se implementa por ahora con botones de subir y bajar
+  (accesibles con teclado); arrastrar y soltar queda en la etapa de extras.
+- `exportar()` genera un archivo CSV (separado por punto y coma, con tildes para Excel).

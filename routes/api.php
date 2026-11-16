@@ -5,14 +5,19 @@ use App\Http\Controllers\Api\V1\AusenciaController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BusquedaController;
 use App\Http\Controllers\Api\V1\CoberturaController;
+use App\Http\Controllers\Api\V1\CorteController;
+use App\Http\Controllers\Api\V1\EscaletaController;
 use App\Http\Controllers\Api\V1\GrillaController;
+use App\Http\Controllers\Api\V1\ItemEscaletaController;
 use App\Http\Controllers\Api\V1\MaterialController;
 use App\Http\Controllers\Api\V1\MenuController;
 use App\Http\Controllers\Api\V1\NotaController;
 use App\Http\Controllers\Api\V1\PerfilController;
 use App\Http\Controllers\Api\V1\PermisoController;
 use App\Http\Controllers\Api\V1\PersonalController;
+use App\Http\Controllers\Api\V1\PlantillaController;
 use App\Http\Controllers\Api\V1\PrestamoController;
+use App\Http\Controllers\Api\V1\ProgramaController;
 use App\Http\Controllers\Api\V1\RecursoController;
 use App\Http\Controllers\Api\V1\ReservaRecursoController;
 use App\Http\Controllers\Api\V1\RolController;
@@ -114,6 +119,26 @@ Route::middleware(['auth:sanctum', 'activo'])->group(function () {
     Route::get('/notas/{nota}/material', [MaterialController::class, 'index'])->middleware('permiso:material.listar');
     Route::post('/notas/{nota}/material', [MaterialController::class, 'store'])->middleware('permiso:material.crear');
     Route::put('/material/{material}', [MaterialController::class, 'update'])->whereNumber('material')->middleware('permiso:material.editar');
+
+    // CU-06 Configurar Plantillas y Confeccionar Escaleta del Noticiero ──────
+    Route::get('/programas', [ProgramaController::class, 'index'])->middleware('permiso:programas.listar');
+    Route::post('/programas', [ProgramaController::class, 'store'])->middleware('permiso:programas.crear');
+    Route::post('/grilla', [GrillaController::class, 'store'])->middleware('permiso:grilla.crear');
+    Route::get('/plantillas', [PlantillaController::class, 'index'])->middleware('permiso:plantillas.listar');
+    Route::post('/plantillas', [PlantillaController::class, 'store'])->middleware('permiso:plantillas.crear');
+    Route::put('/plantillas/{plantilla}', [PlantillaController::class, 'update'])->whereNumber('plantilla')->middleware('permiso:plantillas.editar');
+    Route::post('/plantillas/{plantilla}/cortes', [CorteController::class, 'store'])->whereNumber('plantilla')->middleware('permiso:plantillas.editar');
+    Route::put('/cortes/{corte}', [CorteController::class, 'update'])->whereNumber('corte')->middleware('permiso:plantillas.editar');
+    Route::get('/escaletas', [EscaletaController::class, 'index'])->middleware('permiso:escaletas.listar');
+    Route::post('/escaletas', [EscaletaController::class, 'store'])->middleware('permiso:escaletas.crear');
+    Route::get('/escaletas/{escaleta}', [EscaletaController::class, 'show'])->whereNumber('escaleta')->middleware('permiso:escaletas.listar');
+    Route::put('/escaletas/{escaleta}/estado', [EscaletaController::class, 'estado'])->whereNumber('escaleta')->middleware('permiso:escaletas.estado');
+    Route::get('/escaletas/{escaleta}/lectura', [EscaletaController::class, 'lectura'])->whereNumber('escaleta')->middleware('permiso:escaletas.lectura');
+    Route::get('/escaletas/{escaleta}/exportar', [EscaletaController::class, 'exportar'])->whereNumber('escaleta')->middleware('permiso:escaletas.exportar');
+    Route::post('/escaletas/{escaleta}/items', [ItemEscaletaController::class, 'store'])->whereNumber('escaleta')->middleware('permiso:escaletas.items');
+    Route::put('/items/{item}', [ItemEscaletaController::class, 'update'])->whereNumber('item')->middleware('permiso:escaletas.items');
+    Route::post('/items/{item}/flotar', [ItemEscaletaController::class, 'flotar'])->whereNumber('item')->middleware('permiso:escaletas.items');
+    Route::delete('/items/{item}', [ItemEscaletaController::class, 'destroy'])->whereNumber('item')->middleware('permiso:escaletas.items');
 
     // CU-08 Reportes y Estadísticas: contador de visitas por página
     Route::get('/visitas', [VisitaController::class, 'index'])->middleware('permiso:bitacora.ver');
