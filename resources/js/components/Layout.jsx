@@ -1,11 +1,12 @@
 import { LogIn, LogOut, Menu as IconoMenu, SlidersHorizontal, X } from 'lucide-react';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import BuscadorGlobal from './BuscadorGlobal';
 import ControlAccesibilidad from './ControlAccesibilidad';
 import MenuDinamico from './MenuDinamico';
 import PieDePagina from './PieDePagina';
+import Cargando from './ui/Cargando';
 
 /**
  * Panel principal (layout) del diagrama de navegación general: encabezado con
@@ -98,7 +99,10 @@ export default function Layout() {
                     </aside>
                 )}
                 <main id="contenido" tabIndex={-1} className="min-w-0 flex-1 p-4 md:p-6">
-                    <Outlet />
+                    {/* Las pantallas se cargan bajo demanda: el encabezado y el menú quedan visibles. */}
+                    <Suspense fallback={<Cargando />}>
+                        <Outlet />
+                    </Suspense>
                 </main>
             </div>
 
