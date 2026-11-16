@@ -55,3 +55,17 @@ export function diasTexto(dias) {
     if (lista.length > 2 && seguidos) return `${DIAS[lista[0]]} a ${DIAS[lista.at(-1)]}`;
     return lista.map((d) => DIAS[d]).join(', ');
 }
+
+export const TIPOS_PIEZA = {
+    lectura: 'Lectura', vo: 'VO', vo_sot: 'VO + SOT', nota_completa: 'Nota completa', enlace_vivo: 'Enlace en vivo', entrevista_estudio: 'Entrevista en estudio',
+};
+
+export const ESTADOS_NOTA = {
+    borrador: 'Borrador', en_revision: 'En revisión', observada: 'Observada', aprobada: 'Aprobada', emitida: 'Emitida', baja: 'De baja',
+};
+
+export const TONO_NOTA = { borrador: 'neutro', en_revision: 'acento', observada: 'peligro', aprobada: 'exito', emitida: 'exito', baja: 'neutro' };
+
+export const TIPOS_MATERIAL = { video: 'Video', sot: 'SOT', grafico: 'Gráfico', foto: 'Foto', audio: 'Audio' };
+
+export const ESTADOS_MATERIAL = { pendiente: 'Pendiente', ingestado: 'Ingestado', en_edicion: 'En edición', listo: 'Listo para emitir' };
