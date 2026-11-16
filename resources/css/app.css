@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Temas visuales (documento, Tabla 40). Cada combinación de tema y modo redefine
+ * los mismos tokens; Tailwind los usa con clases como bg-fondo o text-primario.
+ * Los colores son una primera versión: el documento los deja para ajustar.
+ */
+
+/* Adultos (tema por defecto): paleta institucional sobria, azul y gris. */
+:root,
+[data-tema='adultos'] {
+    --c-fondo: 255 255 255;
+    --c-superficie: 243 245 248;
+    --c-texto: 17 24 39;
+    --c-suave: 75 85 99;
+    --c-borde: 209 213 219;
+    --c-primario: 30 64 175;
+    --c-sobre-primario: 255 255 255;
+    --c-acento: 71 85 105;
+    --c-peligro: 185 28 28;
+    --c-exito: 21 128 61;
+    --radio: 0.375rem;
+    --fuente-base: 16px;
+}
+[data-tema='adultos'][data-modo='noche'] {
+    --c-fondo: 31 41 55;
+    --c-superficie: 17 24 39;
+    --c-texto: 243 244 246;
+    --c-suave: 191 197 206;
+    --c-borde: 75 85 99;
+    --c-primario: 147 180 253;
+    --c-sobre-primario: 17 24 39;
+    --c-acento: 203 213 225;
+    --c-peligro: 252 165 165;
+    --c-exito: 134 239 172;
+}
+
+/* Jóvenes: acentos saturados violeta y cian, tarjetas con sombra. */
+[data-tema='jovenes'] {
+    --c-fondo: 244 244 247;
+    --c-superficie: 255 255 255;
+    --c-texto: 24 24 27;
+    --c-suave: 82 82 91;
+    --c-borde: 212 212 216;
+    --c-primario: 109 40 217;
+    --c-sobre-primario: 255 255 255;
+    --c-acento: 8 145 178;
+    --c-peligro: 190 18 60;
+    --c-exito: 21 128 61;
+    --radio: 0.75rem;
+    --fuente-base: 16px;
+}
+[data-tema='jovenes'][data-modo='noche'] {
+    --c-fondo: 9 9 11;
+    --c-superficie: 24 24 27;
+    --c-texto: 250 250 250;
+    --c-suave: 196 196 204;
+    --c-borde: 63 63 70;
+    --c-primario: 192 132 252;
+    --c-sobre-primario: 9 9 11;
+    --c-acento: 34 211 238;
+    --c-peligro: 251 113 133;
+    --c-exito: 74 222 128;
+}
+
+/* Niños: colores primarios vivos, bordes muy redondeados, letra más grande. */
+[data-tema='ninos'] {
+    --c-fondo: 255 247 230;
+    --c-superficie: 255 255 255;
+    --c-texto: 30 27 75;
+    --c-suave: 67 56 102;
+    --c-borde: 253 186 116;
+    --c-primario: 220 38 38;
+    --c-sobre-primario: 255 255 255;
+    --c-acento: 37 99 235;
+    --c-peligro: 185 28 28;
+    --c-exito: 22 163 74;
+    --radio: 1.25rem;
+    --fuente-base: 18px;
+}
+[data-tema='ninos'][data-modo='noche'] {
+    --c-fondo: 23 37 84;
+    --c-superficie: 30 58 138;
+    --c-texto: 254 252 232;
+    --c-suave: 219 234 254;
+    --c-borde: 250 204 21;
+    --c-primario: 250 204 21;
+    --c-sobre-primario: 23 37 84;
+    --c-acento: 125 211 252;
+    --c-peligro: 252 165 165;
+    --c-exito: 134 239 172;
+}
+
+/* Alto contraste (7:1): negro sobre blanco, o blanco sobre negro de noche. */
+[data-contraste='alto'] {
+    --c-fondo: 255 255 255;
+    --c-superficie: 255 255 255;
+    --c-texto: 0 0 0;
+    --c-suave: 0 0 0;
+    --c-borde: 0 0 0;
+    --c-primario: 0 0 0;
+    --c-sobre-primario: 255 255 255;
+    --c-acento: 0 0 0;
+    --c-peligro: 0 0 0;
+    --c-exito: 0 0 0;
+}
+[data-contraste='alto'][data-modo='noche'] {
+    --c-fondo: 0 0 0;
+    --c-superficie: 0 0 0;
+    --c-texto: 255 255 255;
+    --c-suave: 255 255 255;
+    --c-borde: 255 255 255;
+    --c-primario: 255 255 255;
+    --c-sobre-primario: 0 0 0;
+    --c-acento: 255 255 255;
+    --c-peligro: 255 255 255;
+    --c-exito: 255 255 255;
+}
+
+/* Tamaño de letra: --escala va de 0.8 a 1.5 (botones A−, A, A+). */
+html {
+    font-size: calc(var(--fuente-base) * var(--escala, 1));
+}
+body {
+    @apply bg-fondo text-texto;
+}
+/* Foco siempre visible para navegar con teclado (WCAG 2.4.7). */
+:focus-visible {
+    outline: 3px solid rgb(var(--c-acento));
+    outline-offset: 2px;
+}
