@@ -84,8 +84,9 @@ Vienen del sistema vía correo (Proyecto 1) o protegen el acceso al sistema web:
 
 ## Diferencias con el documento que conviene revisar
 
-- `onReordenar(arrastrar)` del Editor de Escaleta se implementa por ahora con botones de subir y bajar
-  (accesibles con teclado); arrastrar y soltar queda en la etapa de extras.
+- `onReordenar(arrastrar)` del Editor de Escaleta se hace arrastrando y soltando los ítems (también a
+  otro bloque) y, para quien usa el teclado, con botones de subir y bajar.
+- `mostrarQR()` de la Hoja de Asignación muestra un código QR con la dirección de la hoja.
 - `exportar()` genera un archivo CSV (separado por punto y coma, con tildes para Excel).
 
 ## Reglas y decisiones del CU-08
@@ -97,3 +98,9 @@ Vienen del sistema vía correo (Proyecto 1) o protegen el acceso al sistema web:
 - Uso de equipos muestra solo los recursos usados y dice cuántos no se usaron (D30).
 - La bitácora de comandos lee `bitacora_comando` del sistema vía correo (asuntos ya enmascarados).
 - Los intentos fallidos agrupados por IP los ve solo el Administrador (`bitacora.fallidos`).
+
+## Ajustes técnicos posteriores
+
+- Las pantallas se cargan bajo demanda (React.lazy): el JavaScript inicial bajó de 896 kB a 271 kB (RNF-31).
+- `php artisan canal11:administrador <correo>` crea la cuenta del Administrador en producción, donde
+  no se cargan las cuentas de prueba.
