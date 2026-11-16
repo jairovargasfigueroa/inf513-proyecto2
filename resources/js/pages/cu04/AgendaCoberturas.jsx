@@ -88,7 +88,7 @@ export default function AgendaCoberturas() {
         : [];
 
     const tarjeta = (c) => (
-        <article key={c.id} className={`rounded-tema border border-borde bg-fondo p-3 ${ACTIVAS.includes(c.estado) ? '' : 'opacity-70'}`}>
+        <article key={c.id} className={`min-w-0 break-words rounded-tema border border-borde bg-fondo p-3 ${ACTIVAS.includes(c.estado) ? '' : 'opacity-70'}`}>
             <p className="text-sm font-semibold text-primario">{hora(c.fecha_hora_inicio)} – {hora(c.fecha_hora_fin)}</p>
             <h3 className="font-semibold leading-snug">
                 <Link to={`/coberturas/${c.id}`} className="hover:underline">{c.titulo}</Link>
@@ -98,7 +98,7 @@ export default function AgendaCoberturas() {
                 <Insignia tono={TONO_ESTADO[c.estado]}>{texto(ESTADOS_COBERTURA, c.estado)}</Insignia>
                 <Insignia tono={c.prioridad === 'alta' ? 'peligro' : 'neutro'}>Prioridad {texto(PRIORIDADES, c.prioridad).toLowerCase()}</Insignia>
             </div>
-            <p className="mt-2 flex gap-3 text-xs text-suave">
+            <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-suave">
                 <span className="flex items-center gap-1" title="Personal asignado"><Users className="h-3.5 w-3.5" aria-hidden="true" /> {c.personal}<span className="sr-only"> personas</span></span>
                 <span className="flex items-center gap-1" title="Recursos reservados"><Video className="h-3.5 w-3.5" aria-hidden="true" /> {c.recursos}<span className="sr-only"> recursos</span></span>
                 <span>{texto(TIPOS_COBERTURA, c.tipo)}</span>
@@ -149,7 +149,7 @@ export default function AgendaCoberturas() {
             {error && <p className="text-peligro" role="alert">{error}</p>}
             {!agenda && !error && <Cargando />}
             {agenda && (
-                <div className={vista === 'semana' ? 'grid gap-3 md:grid-cols-2 xl:grid-cols-7' : 'grid gap-3'}>
+                <div className={vista === 'semana' ? 'grid gap-3 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-7' : 'grid gap-3'}>
                     {dias.map((dia) => {
                         const delDia = agenda.data.filter((c) => c.fecha_hora_inicio.slice(0, 10) === dia);
                         return (
