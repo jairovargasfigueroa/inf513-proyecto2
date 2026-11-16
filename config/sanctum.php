@@ -37,7 +37,7 @@ return [
     |
     */
 
-    'guard' => ['web'],
+    'guard' => [], // solo tokens Bearer (la SPA no usa cookies de sesión)
 
     /*
     |--------------------------------------------------------------------------
@@ -50,7 +50,7 @@ return [
     |
     */
 
-    'expiration' => null,
+    'expiration' => env('SANCTUM_EXPIRATION', 480), // minutos: una jornada de trabajo
 
     /*
     |--------------------------------------------------------------------------
