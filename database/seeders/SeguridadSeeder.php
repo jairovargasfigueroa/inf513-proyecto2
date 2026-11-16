@@ -96,11 +96,16 @@ class SeguridadSeeder extends Seeder
         'bitacora.fallidos' => ['CU-08', 'Consultar intentos fallidos por IP', 'ADM'],
     ];
 
-    /** Tabla C1 Opciones del Menú Dinámico: [grupo, nombre, ruta, icono, permiso (null = todos)]. */
+    /**
+     * Tabla C1 Opciones del Menú Dinámico: [grupo, nombre, ruta, icono, permiso].
+     * Permiso null = todos los roles; una lista = los roles que tengan alguno
+     * (la opción queda sin permiso propio y la asignación la da rol_menu).
+     */
     private const MENU = [
         ['Gerencia', 'Panel Analítico', '/panel', 'panel', 'dashboard.ver'],
         ['Gerencia', 'Analítica Periodística', '/analitica', 'analitica', 'analitica.ver'],
-        ['Gerencia', 'Reportes y Estadísticas', '/reportes', 'reportes', 'reportes.ver'],
+        // Se habilita con cualquiera de los dos: el Jefe de Área Técnica solo tiene el de mantenimiento.
+        ['Gerencia', 'Reportes y Estadísticas', '/reportes', 'reportes', ['reportes.ver', 'reportes.mantenimiento']],
         ['Prensa', 'Agenda de Coberturas', '/coberturas', 'agenda', 'coberturas.listar'],
         ['Prensa', 'Gestión de Notas', '/notas', 'notas', 'notas.listar'],
         ['Emisión', 'Programas y Grilla', '/programas', 'programas', 'programas.listar'],
@@ -143,6 +148,7 @@ class SeguridadSeeder extends Seeder
             }
 
             $menus = [];
+            $alternativos = [];
             foreach (self::MENU as $orden => [$grupo, $nombre, $ruta, $icono, $permiso]) {
                 $menus[] = Menu::updateOrCreate(['ruta' => $ruta], [
                     'grupo' => $grupo,
@@ -150,8 +156,9 @@ class SeguridadSeeder extends Seeder
                     'icono' => $icono,
                     'orden' => ($orden + 1) * 10,
                     'activo' => true,
-                    'permiso_web_id' => $permiso ? PermisoWeb::where('codigo', $permiso)->value('id') : null,
+                    'permiso_web_id' => is_string($permiso) ? PermisoWeb::where('codigo', $permiso)->value('id') : null,
                 ]);
+                $alternativos[end($menus)->id] = is_array($permiso) ? $permiso : null;
             }
 
             foreach ($roles as $nombre => $rolId) {
@@ -161,7 +168,9 @@ class SeguridadSeeder extends Seeder
 
                 // Cada rol recibe las opciones del menú cuyo permiso tiene (y Mi Perfil).
                 $rol->menus()->sync(collect($menus)
-                    ->filter(fn (Menu $m) => $m->permiso_web_id === null || in_array($m->permiso_web_id, $permisos, true))
+                    ->filter(fn (Menu $m) => $alternativos[$m->id]
+                        ? array_intersect($alternativos[$m->id], array_keys($permisos)) !== []
+                        : $m->permiso_web_id === null || in_array($m->permiso_web_id, $permisos, true))
                     ->pluck('id')
                     ->all());
 

@@ -8,6 +8,7 @@ al final: cada fila dice qué elemento cambió, qué se cambió y por qué.
 |---|---|---|---|---|
 | 16/11/2026 | CU-01 | `FormularioUsuario` «form» | Se agrega el atributo `estado: select` (activo / inactivo), solo al editar. | Sin él, un usuario desactivado con `DELETE /usuarios/{id}` no se podía volver a activar. |
 | 16/11/2026 | CU-02 | `FormularioPersonal` «form» | Se agrega `estado: select`, solo al editar. | Igual que en el CU-01: una ficha desactivada con `DELETE /personal/{id}` no se podía reactivar. |
+| 16/11/2026 | CU-08 | Opción del menú «Reportes y Estadísticas» (Anexo C) | Se habilita con `reportes.ver` **o** `reportes.mantenimiento` (en la base queda sin permiso propio y la asignan las filas de `rol_menu`). | La matriz (Anexo B) da al Jefe de Área Técnica `reportes.mantenimiento` pero no `reportes.ver`: con el menú del documento nunca llegaba a su reporte. |
 | 16/11/2026 | CU-01 | `FormularioPerfil` «form» | Se agregan `passwordActual` y `passwordConfirmacion` (obligatorias solo al cambiar la contraseña). | Cambiar la contraseña sin pedir la actual permitiría que otra persona la cambie desde una sesión abierta. |
 
 ## Reglas de negocio que la implementación agrega al CU-01
@@ -86,3 +87,13 @@ Vienen del sistema vía correo (Proyecto 1) o protegen el acceso al sistema web:
 - `onReordenar(arrastrar)` del Editor de Escaleta se implementa por ahora con botones de subir y bajar
   (accesibles con teclado); arrastrar y soltar queda en la etapa de extras.
 - `exportar()` genera un archivo CSV (separado por punto y coma, con tildes para Excel).
+
+## Reglas y decisiones del CU-08
+
+- Los reportes responden con la misma forma (título, columnas, filas, totales y una nota) y la
+  Vista del Reporte los muestra, los descarga en CSV o los imprime (o guarda en PDF desde el navegador).
+- Reportes nuevos en la web: equipos en mantenimiento (incidencias, altas y bajas del período) y
+  notas emitidas, observadas y flotadas por periodista.
+- Uso de equipos muestra solo los recursos usados y dice cuántos no se usaron (D30).
+- La bitácora de comandos lee `bitacora_comando` del sistema vía correo (asuntos ya enmascarados).
+- Los intentos fallidos agrupados por IP los ve solo el Administrador (`bitacora.fallidos`).
