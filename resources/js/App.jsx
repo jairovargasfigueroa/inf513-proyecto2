@@ -31,6 +31,10 @@ import ProgramasGrilla from './pages/cu06/ProgramasGrilla';
 import VistaPresentador from './pages/cu06/VistaPresentador';
 import AnaliticaPeriodistica from './pages/cu07/AnaliticaPeriodistica';
 import PanelAnalitico from './pages/cu07/PanelAnalitico';
+import BitacoraAccesos from './pages/cu08/BitacoraAccesos';
+import BitacoraComandos from './pages/cu08/BitacoraComandos';
+import ReportesEstadisticas from './pages/cu08/ReportesEstadisticas';
+import VistaReporte from './pages/cu08/VistaReporte';
 
 /*
  * Pantallas del menú (documento, Anexo C): ruta, permiso que la habilita y CU.
@@ -51,10 +55,10 @@ const PANTALLAS = [
     { ruta: '/plantillas', titulo: 'Plantillas de Emisión', permiso: 'plantillas.listar', cu: 'CU-06', pantalla: PlantillasEmision },
     { ruta: '/escaletas', titulo: 'Escaletas', permiso: 'escaletas.listar', cu: 'CU-06', pantalla: Escaletas },
     { ruta: '/analitica', titulo: 'Analítica Periodística', permiso: 'analitica.ver', cu: 'CU-07', pantalla: AnaliticaPeriodistica },
-    { ruta: '/reportes', titulo: 'Reportes y Estadísticas', permiso: 'reportes.ver', cu: 'CU-08' },
+    { ruta: '/reportes', titulo: 'Reportes y Estadísticas', permiso: ['reportes.ver', 'reportes.mantenimiento'], cu: 'CU-08', pantalla: ReportesEstadisticas },
     { ruta: '/seguridad/matriz', titulo: 'Matriz de Accesos', permiso: 'seguridad.matriz.ver', cu: 'CU-01', pantalla: MatrizAccesos },
     { ruta: '/seguridad/menu', titulo: 'Menú Dinámico', permiso: 'seguridad.menu', cu: 'CU-01', pantalla: AdministrarMenu },
-    { ruta: '/seguridad/bitacora', titulo: 'Bitácora de Accesos', permiso: 'bitacora.ver', cu: 'CU-08' },
+    { ruta: '/seguridad/bitacora', titulo: 'Bitácora de Accesos', permiso: 'bitacora.ver', cu: 'CU-08', pantalla: BitacoraAccesos },
 ];
 
 /* Pantallas a las que se llega desde otra pantalla (no desde el menú). */
@@ -68,6 +72,8 @@ const SUBPANTALLAS = [
     { ruta: '/notas/:id/material', permiso: 'material.listar', pantalla: MaterialAudiovisual },
     { ruta: '/escaletas/:id', permiso: 'escaletas.listar', pantalla: EditorEscaleta },
     { ruta: '/escaletas/:id/presentador', permiso: 'escaletas.lectura', pantalla: VistaPresentador },
+    { ruta: '/reportes/ver', permiso: ['reportes.ver', 'reportes.mantenimiento'], pantalla: VistaReporte },
+    { ruta: '/reportes/bitacora-comandos', permiso: 'bitacora.ver', pantalla: BitacoraComandos },
 ];
 
 export default function App() {

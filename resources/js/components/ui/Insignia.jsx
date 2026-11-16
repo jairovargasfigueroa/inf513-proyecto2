@@ -8,7 +8,7 @@ const TONOS = {
 
 export default function Insignia({ tono = 'neutro', children }) {
     return (
-        <span className={`inline-block rounded-full border px-2 py-0.5 text-xs font-semibold ${TONOS[tono]}`}>
+        <span className={`inline-block whitespace-nowrap rounded-full border px-2 py-0.5 text-xs font-semibold ${TONOS[tono]}`}>
             {children}
         </span>
     );
