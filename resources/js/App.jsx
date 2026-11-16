@@ -24,6 +24,11 @@ import DetalleNota from './pages/cu05/DetalleNota';
 import GestionNotas from './pages/cu05/GestionNotas';
 import HistorialGuion from './pages/cu05/HistorialGuion';
 import MaterialAudiovisual from './pages/cu05/MaterialAudiovisual';
+import EditorEscaleta from './pages/cu06/EditorEscaleta';
+import Escaletas from './pages/cu06/Escaletas';
+import PlantillasEmision from './pages/cu06/PlantillasEmision';
+import ProgramasGrilla from './pages/cu06/ProgramasGrilla';
+import VistaPresentador from './pages/cu06/VistaPresentador';
 
 /*
  * Pantallas del menú (documento, Anexo C): ruta, permiso que la habilita y CU.
@@ -40,9 +45,9 @@ const PANTALLAS = [
     { ruta: '/prestamos', titulo: 'Préstamos de Recursos', permiso: 'prestamos.listar', cu: 'CU-03', pantalla: PrestamosRecursos },
     { ruta: '/coberturas', titulo: 'Agenda de Coberturas', permiso: 'coberturas.listar', cu: 'CU-04', pantalla: AgendaCoberturas },
     { ruta: '/notas', titulo: 'Gestión de Notas', permiso: 'notas.listar', cu: 'CU-05', pantalla: GestionNotas },
-    { ruta: '/programas', titulo: 'Programas y Grilla', permiso: 'programas.listar', cu: 'CU-06' },
-    { ruta: '/plantillas', titulo: 'Plantillas de Emisión', permiso: 'plantillas.listar', cu: 'CU-06' },
-    { ruta: '/escaletas', titulo: 'Escaletas', permiso: 'escaletas.listar', cu: 'CU-06' },
+    { ruta: '/programas', titulo: 'Programas y Grilla', permiso: 'programas.listar', cu: 'CU-06', pantalla: ProgramasGrilla },
+    { ruta: '/plantillas', titulo: 'Plantillas de Emisión', permiso: 'plantillas.listar', cu: 'CU-06', pantalla: PlantillasEmision },
+    { ruta: '/escaletas', titulo: 'Escaletas', permiso: 'escaletas.listar', cu: 'CU-06', pantalla: Escaletas },
     { ruta: '/analitica', titulo: 'Analítica Periodística', permiso: 'analitica.ver', cu: 'CU-07' },
     { ruta: '/reportes', titulo: 'Reportes y Estadísticas', permiso: 'reportes.ver', cu: 'CU-08' },
     { ruta: '/seguridad/matriz', titulo: 'Matriz de Accesos', permiso: 'seguridad.matriz.ver', cu: 'CU-01', pantalla: MatrizAccesos },
@@ -59,6 +64,8 @@ const SUBPANTALLAS = [
     { ruta: '/notas/:id', permiso: 'notas.listar', pantalla: DetalleNota },
     { ruta: '/notas/:id/historial', permiso: 'notas.listar', pantalla: HistorialGuion },
     { ruta: '/notas/:id/material', permiso: 'material.listar', pantalla: MaterialAudiovisual },
+    { ruta: '/escaletas/:id', permiso: 'escaletas.listar', pantalla: EditorEscaleta },
+    { ruta: '/escaletas/:id/presentador', permiso: 'escaletas.lectura', pantalla: VistaPresentador },
 ];
 
 export default function App() {
