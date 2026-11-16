@@ -17,12 +17,18 @@ export function AvisosProvider({ children }) {
     const mostrar = useCallback((texto, tipo = 'exito') => {
         const id = siguienteId++;
         setAvisos((lista) => [...lista, { id, texto, tipo }]);
-        setTimeout(() => quitar(id), 5000);
+        setTimeout(() => quitar(id), tipo === 'exito' ? 5000 : 9000);
     }, [quitar]);
 
     const valor = useMemo(() => ({
         exito: (texto) => mostrar(texto, 'exito'),
         error: (texto) => mostrar(texto, 'error'),
+        advertencia: (texto) => mostrar(texto, 'advertencia'),
+        /** Muestra el mensaje de la API y sus avisos (p. ej. coberturas que hay que reasignar). */
+        respuesta: (data) => {
+            mostrar(data.message, 'exito');
+            (data.avisos ?? []).forEach((a) => mostrar(a, 'advertencia'));
+        },
     }), [mostrar]);
 
     return (
@@ -33,10 +39,10 @@ export function AvisosProvider({ children }) {
                     <div
                         key={a.id}
                         className={`flex items-start gap-2 rounded-tema border bg-superficie p-3 shadow-lg ${
-                            a.tipo === 'error' ? 'border-peligro text-peligro' : 'border-exito text-exito'
+                            { error: 'border-peligro text-peligro', advertencia: 'border-acento text-acento' }[a.tipo] ?? 'border-exito text-exito'
                         }`}
                     >
-                        {a.tipo === 'error'
+                        {a.tipo !== 'exito'
                             ? <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
                             : <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />}
                         <p className="flex-1 text-sm font-medium text-texto">{a.texto}</p>
