@@ -1,7 +1,7 @@
 import { LogIn, Tv } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Cargando from '../components/Cargando';
+import Cargando from '../components/ui/Cargando';
 import { useAuth } from '../context/AuthContext';
 import api, { mensajeDeError } from '../services/api';
 

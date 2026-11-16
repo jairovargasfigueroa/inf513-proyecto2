@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import Cargando from './Cargando';
+import Cargando from './ui/Cargando';
 
 /**
  * Protege una pantalla: sin sesión lleva al inicio de sesión y sin el permiso

@@ -67,6 +67,14 @@ export function AuthProvider({ children }) {
         }
     }, [limpiar]);
 
+    /** Vuelve a leer el usuario, sus permisos y su menú (tras cambiar la matriz o el perfil). */
+    const refrescar = useCallback(async () => {
+        const [{ data: yo }, { data: opciones }] = await Promise.all([api.get('/auth/me'), api.get('/auth/menu')]);
+        setUsuario(yo.usuario);
+        setPermisos(yo.permisos);
+        setMenu(opciones.data);
+    }, []);
+
     const valor = useMemo(() => ({
         usuario,
         permisos,
@@ -78,7 +86,8 @@ export function AuthProvider({ children }) {
         puede: (permiso) => permisos.includes(permiso),
         iniciarSesion,
         cerrarSesion,
-    }), [usuario, permisos, menu, cargando, aviso, iniciarSesion, cerrarSesion]);
+        refrescar,
+    }), [usuario, permisos, menu, cargando, aviso, iniciarSesion, cerrarSesion, refrescar]);
 
     return <AuthContext.Provider value={valor}>{children}</AuthContext.Provider>;
 }

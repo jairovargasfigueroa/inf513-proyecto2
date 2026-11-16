@@ -149,6 +149,9 @@ body {
     .boton {
         @apply inline-flex items-center gap-2 rounded-tema bg-primario px-4 py-2 font-semibold text-sobre-primario hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60;
     }
+    .boton-peligro {
+        @apply inline-flex items-center gap-2 rounded-tema bg-peligro px-4 py-2 font-semibold text-sobre-primario hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60;
+    }
     .boton-secundario {
         @apply inline-flex items-center gap-2 rounded-tema border border-borde px-3 py-2 text-sm font-medium hover:bg-fondo;
     }

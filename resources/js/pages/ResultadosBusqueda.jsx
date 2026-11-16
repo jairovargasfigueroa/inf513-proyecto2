@@ -1,7 +1,7 @@
 import { ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import Cargando from '../components/Cargando';
+import Cargando from '../components/ui/Cargando';
 import api, { mensajeDeError } from '../services/api';
 
 /**
