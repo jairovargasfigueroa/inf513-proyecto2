@@ -20,6 +20,10 @@ import PrestamosRecursos from './pages/cu03/PrestamosRecursos';
 import AgendaCoberturas from './pages/cu04/AgendaCoberturas';
 import DetalleCobertura from './pages/cu04/DetalleCobertura';
 import HojaAsignacion from './pages/cu04/HojaAsignacion';
+import DetalleNota from './pages/cu05/DetalleNota';
+import GestionNotas from './pages/cu05/GestionNotas';
+import HistorialGuion from './pages/cu05/HistorialGuion';
+import MaterialAudiovisual from './pages/cu05/MaterialAudiovisual';
 
 /*
  * Pantallas del menú (documento, Anexo C): ruta, permiso que la habilita y CU.
@@ -35,7 +39,7 @@ const PANTALLAS = [
     { ruta: '/recursos', titulo: 'Inventario de Recursos', permiso: 'recursos.listar', cu: 'CU-03', pantalla: InventarioRecursos },
     { ruta: '/prestamos', titulo: 'Préstamos de Recursos', permiso: 'prestamos.listar', cu: 'CU-03', pantalla: PrestamosRecursos },
     { ruta: '/coberturas', titulo: 'Agenda de Coberturas', permiso: 'coberturas.listar', cu: 'CU-04', pantalla: AgendaCoberturas },
-    { ruta: '/notas', titulo: 'Gestión de Notas', permiso: 'notas.listar', cu: 'CU-05' },
+    { ruta: '/notas', titulo: 'Gestión de Notas', permiso: 'notas.listar', cu: 'CU-05', pantalla: GestionNotas },
     { ruta: '/programas', titulo: 'Programas y Grilla', permiso: 'programas.listar', cu: 'CU-06' },
     { ruta: '/plantillas', titulo: 'Plantillas de Emisión', permiso: 'plantillas.listar', cu: 'CU-06' },
     { ruta: '/escaletas', titulo: 'Escaletas', permiso: 'escaletas.listar', cu: 'CU-06' },
@@ -52,6 +56,9 @@ const SUBPANTALLAS = [
     { ruta: '/personal/disponibilidad', permiso: 'personal.disponibilidad', pantalla: DisponibilidadPersonal },
     { ruta: '/coberturas/:id', permiso: 'coberturas.listar', pantalla: DetalleCobertura },
     { ruta: '/coberturas/:id/hoja', permiso: 'coberturas.hoja', pantalla: HojaAsignacion },
+    { ruta: '/notas/:id', permiso: 'notas.listar', pantalla: DetalleNota },
+    { ruta: '/notas/:id/historial', permiso: 'notas.listar', pantalla: HistorialGuion },
+    { ruta: '/notas/:id/material', permiso: 'material.listar', pantalla: MaterialAudiovisual },
 ];
 
 export default function App() {

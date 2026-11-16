@@ -54,3 +54,15 @@ Vienen del sistema vía correo (Proyecto 1) o protegen el acceso al sistema web:
 - R4: el retorno, con cualquier resultado, libera al personal y los recursos y cierra las entregas de la cobertura.
   Solo lo registran el Jefe de Prensa o el personal asignado; «cumplida» exige que la cobertura haya empezado.
 - Duplicar (nuevo en la web): copias diarias o semanales hasta una fecha (máximo 60), sin personal ni recursos.
+
+## Reglas de negocio del CU-05 (vienen del sistema vía correo)
+
+- R13: el slug (mayúsculas, números y guiones) no se repite en la misma fecha.
+- R14: el sistema cuenta las palabras del guion y guarda cada versión; si cambia el guion de una
+  nota aprobada, vuelve a revisión.
+- R15: enviar a revisión desde borrador u observada (con guion); aprobar u observar solo una nota en
+  revisión, y observar exige el motivo. Cada paso queda en `revision_nota`. Las transiciones
+  inválidas responden 422, como dice el diagrama de navegación.
+- A5: solo el autor o el Jefe de Prensa modifican la nota, su guion y sus rótulos.
+- R25: la duración estimada es la lectura (palabras ÷ ritmo) más el video y el SOT del material.
+- Para redactar se necesita una ficha de personal activa; una nota que está en una escaleta no se da de baja.

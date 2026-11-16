@@ -6,7 +6,9 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BusquedaController;
 use App\Http\Controllers\Api\V1\CoberturaController;
 use App\Http\Controllers\Api\V1\GrillaController;
+use App\Http\Controllers\Api\V1\MaterialController;
 use App\Http\Controllers\Api\V1\MenuController;
+use App\Http\Controllers\Api\V1\NotaController;
 use App\Http\Controllers\Api\V1\PerfilController;
 use App\Http\Controllers\Api\V1\PermisoController;
 use App\Http\Controllers\Api\V1\PersonalController;
@@ -14,6 +16,7 @@ use App\Http\Controllers\Api\V1\PrestamoController;
 use App\Http\Controllers\Api\V1\RecursoController;
 use App\Http\Controllers\Api\V1\ReservaRecursoController;
 use App\Http\Controllers\Api\V1\RolController;
+use App\Http\Controllers\Api\V1\RotuloController;
 use App\Http\Controllers\Api\V1\TipoRecursoController;
 use App\Http\Controllers\Api\V1\TurnoController;
 use App\Http\Controllers\Api\V1\UsuarioController;
@@ -95,6 +98,22 @@ Route::middleware(['auth:sanctum', 'activo'])->group(function () {
     Route::delete('/coberturas/{cobertura}/personal/{personal}', [AsignacionPersonalController::class, 'destroy'])->whereNumber('personal')->middleware('permiso:coberturas.asignar');
     Route::post('/coberturas/{cobertura}/recursos', [ReservaRecursoController::class, 'store'])->middleware('permiso:coberturas.reservar');
     Route::delete('/coberturas/{cobertura}/recursos/{recurso}', [ReservaRecursoController::class, 'destroy'])->whereNumber('recurso')->middleware('permiso:coberturas.reservar');
+
+    // CU-05 Redactar Notas (NRCS), Material Audiovisual y Flujo de Aprobación
+    Route::get('/notas', [NotaController::class, 'index'])->middleware('permiso:notas.listar');
+    Route::post('/notas', [NotaController::class, 'store'])->middleware('permiso:notas.crear');
+    Route::get('/notas/{nota}', [NotaController::class, 'show'])->middleware('permiso:notas.listar');
+    Route::put('/notas/{nota}', [NotaController::class, 'update'])->middleware('permiso:notas.editar');
+    Route::delete('/notas/{nota}', [NotaController::class, 'destroy'])->middleware('permiso:notas.baja');
+    Route::put('/notas/{nota}/guion', [NotaController::class, 'guion'])->middleware('permiso:notas.guion');
+    Route::get('/notas/{nota}/versiones', [NotaController::class, 'versiones'])->middleware('permiso:notas.listar');
+    Route::put('/notas/{nota}/rotulos', [RotuloController::class, 'update'])->middleware('permiso:notas.rotulos');
+    Route::post('/notas/{nota}/enviar', [NotaController::class, 'enviar'])->middleware('permiso:notas.enviar');
+    Route::post('/notas/{nota}/aprobar', [NotaController::class, 'aprobar'])->middleware('permiso:notas.aprobar');
+    Route::post('/notas/{nota}/observar', [NotaController::class, 'observar'])->middleware('permiso:notas.observar');
+    Route::get('/notas/{nota}/material', [MaterialController::class, 'index'])->middleware('permiso:material.listar');
+    Route::post('/notas/{nota}/material', [MaterialController::class, 'store'])->middleware('permiso:material.crear');
+    Route::put('/material/{material}', [MaterialController::class, 'update'])->whereNumber('material')->middleware('permiso:material.editar');
 
     // CU-08 Reportes y Estadísticas: contador de visitas por página
     Route::get('/visitas', [VisitaController::class, 'index'])->middleware('permiso:bitacora.ver');
