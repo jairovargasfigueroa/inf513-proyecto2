@@ -30,6 +30,15 @@ export const entero = (v, nombre) =>
 export const entre = (a, b) => (v, nombre) =>
     vacio(v) || (Number(v) >= a && Number(v) <= b) ? null : `El campo ${nombre} debe estar entre ${a} y ${b}.`;
 
+/** Formato con mensaje propio, p. ej. formato(/^\d+$/, 'El CI solo puede tener números.'). */
+export const formato = (patron, mensaje) => (v) => (vacio(v) || patron.test(String(v)) ? null : mensaje);
+
+/** El valor debe ser igual a otro campo (confirmación de contraseña). */
+export const igualA = (otroValor, mensaje) => (v) => (vacio(v) && vacio(otroValor)) || v === otroValor ? null : mensaje;
+
+/** Obligatorio solo si se cumple la condición, con mensaje propio. */
+export const requeridoSi = (condicion, mensaje) => (v) => (condicion && vacio(v) ? mensaje : null);
+
 /** Devuelve { campo: 'mensaje' } con el primer error de cada campo. */
 export function validar(datos, esquema) {
     const errores = {};

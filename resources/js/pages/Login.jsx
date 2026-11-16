@@ -1,8 +1,8 @@
 import { LogIn } from 'lucide-react';
 import { useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import Campo from '../components/Campo';
-import ResumenErrores from '../components/ResumenErrores';
+import Campo from '../components/ui/Campo';
+import ResumenErrores from '../components/ui/ResumenErrores';
 import { useAuth } from '../context/AuthContext';
 import { erroresDeValidacion, mensajeDeError } from '../services/api';
 import { correo, max, requerido, validar } from '../validation/reglas';
