@@ -1,4 +1,5 @@
 import { ArrowLeft, MapPin, Printer } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Cargando from '../../components/ui/Cargando';
@@ -8,8 +9,8 @@ import { fechaLarga, hora } from '../../utils/formato';
 
 /**
  * Hoja de Asignación «client page» (CU-04): cargar(id) con GET
- * /coberturas/{id}/hoja; abrirMapa() e imprimir(). Pensada para el celular y
- * para imprimir (RF-07).
+ * /coberturas/{id}/hoja; mostrarQR(), abrirMapa() e imprimir(). Pensada para
+ * el celular y para imprimir (RF-07).
  */
 export default function HojaAsignacion() {
     const { id } = useParams();
@@ -34,7 +35,14 @@ export default function HojaAsignacion() {
                 <button type="button" className="boton" onClick={() => window.print()}><Printer className="h-4 w-4" aria-hidden="true" /> Imprimir</button>
             </div>
 
-            <header className="tarjeta">
+            <header className="tarjeta relative">
+                {/* mostrarQR(): abre esta hoja desde el celular (pide iniciar sesión). */}
+                <figure className="mb-3 flex flex-col items-center gap-1 sm:absolute sm:right-5 sm:top-5 sm:mb-0">
+                    <div className="rounded-tema bg-white p-2">
+                        <QRCodeSVG value={window.location.href} size={112} level="M" title="Código QR de esta hoja de asignación" />
+                    </div>
+                    <figcaption className="text-xs text-suave">Ábrala en el celular</figcaption>
+                </figure>
                 <p className="text-sm font-semibold uppercase tracking-wide text-acento">Canal 11 · Hoja de asignación</p>
                 <h1 className="mt-1 text-2xl font-bold">{c.titulo}</h1>
                 <p className="mt-1 text-lg">{fechaLarga(c.fecha_hora_inicio)} · {hora(c.fecha_hora_inicio)} a {hora(c.fecha_hora_fin)}</p>

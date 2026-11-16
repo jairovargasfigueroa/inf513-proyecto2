@@ -1,6 +1,6 @@
 import { CalendarOff, Pencil, Search, UserPlus, UserX } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import Puede from '../../components/Puede';
 import Campo from '../../components/ui/Campo';
 import Confirmar from '../../components/ui/Confirmar';
@@ -25,7 +25,8 @@ import { max, requerido, requeridoSi } from '../../validation/reglas';
  */
 export default function GestionPersonal() {
     const avisos = useAvisos();
-    const { filas, meta, filtros, cargando, error, filtrar, setPagina, recargar } = useListado('/personal', { buscar: '', cargo: '', estado: 'activo' });
+    const [parametros] = useSearchParams(); // la búsqueda global llega con ?buscar=
+    const { filas, meta, filtros, cargando, error, filtrar, setPagina, recargar } = useListado('/personal', { buscar: parametros.get('buscar') ?? '', cargo: '', estado: 'activo' });
     const [formulario, setFormulario] = useState({ abierto: false, ficha: null });
     const [aDesactivar, setADesactivar] = useState(null);
 
