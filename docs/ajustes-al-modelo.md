@@ -43,3 +43,14 @@ Vienen del sistema vía correo (Proyecto 1) o protegen el acceso al sistema web:
 
 - La conexión a PostgreSQL usa la zona horaria `America/La_Paz` (`DB_TIMEZONE`): el servidor local
   estaba en GMT y las columnas `TIMESTAMP` con `CURRENT_TIMESTAMP` (bitácora, préstamos) quedaban 4 horas adelantadas.
+
+## Reglas de negocio del CU-04 (vienen del sistema vía correo)
+
+- R3: solo las coberturas planificadas o en curso ocupan al personal y los recursos.
+- R6: una ausencia u otra cobertura que se cruza impide asignar a una persona (409); quedar fuera de su turno es solo una advertencia.
+- R7: solo se reserva un recurso operativo y sin otra reserva que se cruce (409).
+- L6: la función corresponde al cargo (conductor: también un presentador; periodista: también el Jefe de Prensa).
+- Reprogramar vuelve a validar al equipo asignado; si algo choca, no se guarda.
+- R4: el retorno, con cualquier resultado, libera al personal y los recursos y cierra las entregas de la cobertura.
+  Solo lo registran el Jefe de Prensa o el personal asignado; «cumplida» exige que la cobertura haya empezado.
+- Duplicar (nuevo en la web): copias diarias o semanales hasta una fecha (máximo 60), sin personal ni recursos.
