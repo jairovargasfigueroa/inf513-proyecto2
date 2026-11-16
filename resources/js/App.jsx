@@ -29,6 +29,8 @@ import Escaletas from './pages/cu06/Escaletas';
 import PlantillasEmision from './pages/cu06/PlantillasEmision';
 import ProgramasGrilla from './pages/cu06/ProgramasGrilla';
 import VistaPresentador from './pages/cu06/VistaPresentador';
+import AnaliticaPeriodistica from './pages/cu07/AnaliticaPeriodistica';
+import PanelAnalitico from './pages/cu07/PanelAnalitico';
 
 /*
  * Pantallas del menú (documento, Anexo C): ruta, permiso que la habilita y CU.
@@ -36,7 +38,7 @@ import VistaPresentador from './pages/cu06/VistaPresentador';
  * la pantalla provisional del caso de uso que aún no se implementa.
  */
 const PANTALLAS = [
-    { ruta: '/panel', titulo: 'Panel Analítico', permiso: 'dashboard.ver', cu: 'CU-07' },
+    { ruta: '/panel', titulo: 'Panel Analítico', permiso: 'dashboard.ver', cu: 'CU-07', pantalla: PanelAnalitico },
     { ruta: '/usuarios', titulo: 'Gestión de Usuarios', permiso: 'usuarios.listar', cu: 'CU-01', pantalla: GestionUsuarios },
     { ruta: '/perfil', titulo: 'Mi Perfil', permiso: null, cu: 'CU-01', pantalla: MiPerfil },
     { ruta: '/personal', titulo: 'Gestión de Personal', permiso: 'personal.listar', cu: 'CU-02', pantalla: GestionPersonal },
@@ -48,7 +50,7 @@ const PANTALLAS = [
     { ruta: '/programas', titulo: 'Programas y Grilla', permiso: 'programas.listar', cu: 'CU-06', pantalla: ProgramasGrilla },
     { ruta: '/plantillas', titulo: 'Plantillas de Emisión', permiso: 'plantillas.listar', cu: 'CU-06', pantalla: PlantillasEmision },
     { ruta: '/escaletas', titulo: 'Escaletas', permiso: 'escaletas.listar', cu: 'CU-06', pantalla: Escaletas },
-    { ruta: '/analitica', titulo: 'Analítica Periodística', permiso: 'analitica.ver', cu: 'CU-07' },
+    { ruta: '/analitica', titulo: 'Analítica Periodística', permiso: 'analitica.ver', cu: 'CU-07', pantalla: AnaliticaPeriodistica },
     { ruta: '/reportes', titulo: 'Reportes y Estadísticas', permiso: 'reportes.ver', cu: 'CU-08' },
     { ruta: '/seguridad/matriz', titulo: 'Matriz de Accesos', permiso: 'seguridad.matriz.ver', cu: 'CU-01', pantalla: MatrizAccesos },
     { ruta: '/seguridad/menu', titulo: 'Menú Dinámico', permiso: 'seguridad.menu', cu: 'CU-01', pantalla: AdministrarMenu },

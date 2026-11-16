@@ -119,6 +119,24 @@
     --c-exito: 255 255 255;
 }
 
+/*
+ * Colores de los gráficos: paleta categórica validada para daltonismo (orden
+ * fijo: la serie 1 siempre es la misma entidad). El modo noche usa los mismos
+ * tonos ajustados para fondo oscuro.
+ */
+:root {
+    --serie-1: #2a78d6;
+    --serie-2: #eb6834;
+    --serie-3: #1baf7a;
+    --serie-4: #eda100;
+}
+[data-modo='noche'] {
+    --serie-1: #3987e5;
+    --serie-2: #d95926;
+    --serie-3: #199e70;
+    --serie-4: #c98500;
+}
+
 /* Tamaño de letra: --escala va de 0.8 a 1.5 (botones A−, A, A+). */
 html {
     font-size: calc(var(--fuente-base) * var(--escala, 1));
