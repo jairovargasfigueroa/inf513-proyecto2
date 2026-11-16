@@ -15,6 +15,8 @@ import DisponibilidadPersonal from './pages/cu02/DisponibilidadPersonal';
 import GestionAusencias from './pages/cu02/GestionAusencias';
 import GestionPersonal from './pages/cu02/GestionPersonal';
 import GestionTurnos from './pages/cu02/GestionTurnos';
+import InventarioRecursos from './pages/cu03/InventarioRecursos';
+import PrestamosRecursos from './pages/cu03/PrestamosRecursos';
 
 /*
  * Pantallas del menú (documento, Anexo C): ruta, permiso que la habilita y CU.
@@ -27,8 +29,8 @@ const PANTALLAS = [
     { ruta: '/perfil', titulo: 'Mi Perfil', permiso: null, cu: 'CU-01', pantalla: MiPerfil },
     { ruta: '/personal', titulo: 'Gestión de Personal', permiso: 'personal.listar', cu: 'CU-02', pantalla: GestionPersonal },
     { ruta: '/turnos', titulo: 'Gestión de Turnos', permiso: 'turnos.listar', cu: 'CU-02', pantalla: GestionTurnos },
-    { ruta: '/recursos', titulo: 'Inventario de Recursos', permiso: 'recursos.listar', cu: 'CU-03' },
-    { ruta: '/prestamos', titulo: 'Préstamos de Recursos', permiso: 'prestamos.listar', cu: 'CU-03' },
+    { ruta: '/recursos', titulo: 'Inventario de Recursos', permiso: 'recursos.listar', cu: 'CU-03', pantalla: InventarioRecursos },
+    { ruta: '/prestamos', titulo: 'Préstamos de Recursos', permiso: 'prestamos.listar', cu: 'CU-03', pantalla: PrestamosRecursos },
     { ruta: '/coberturas', titulo: 'Agenda de Coberturas', permiso: 'coberturas.listar', cu: 'CU-04' },
     { ruta: '/notas', titulo: 'Gestión de Notas', permiso: 'notas.listar', cu: 'CU-05' },
     { ruta: '/programas', titulo: 'Programas y Grilla', permiso: 'programas.listar', cu: 'CU-06' },

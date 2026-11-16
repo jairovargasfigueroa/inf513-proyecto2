@@ -29,3 +29,17 @@ Vienen del sistema vía correo (Proyecto 1) o protegen el acceso al sistema web:
   en ese tiempo, para reasignarlas.
 - Disponibilidad: personal activo, dentro de su turno (los nocturnos cruzan la medianoche), sin
   ausencia y sin otra cobertura planificada o en curso en ese momento.
+
+## Reglas de negocio del CU-03 (vienen del sistema vía correo)
+
+- R8: un recurso solo se entrega si está operativo y no tiene otra entrega abierta (409 «recurso no disponible»).
+- R9: una incidencia lo pasa a mantenimiento, el alta lo devuelve a operativo y la baja es definitiva;
+  cada paso queda en la tabla `mantenimiento`, que nunca se borra.
+- R12: solo las unidades móviles llevan placa, y la placa no se repite.
+- Un recurso entregado no se da de baja hasta registrar su devolución.
+- Al reportar una incidencia o dar de baja se avisa de las coberturas que lo tenían reservado.
+
+## Ajustes técnicos de la implementación
+
+- La conexión a PostgreSQL usa la zona horaria `America/La_Paz` (`DB_TIMEZONE`): el servidor local
+  estaba en GMT y las columnas `TIMESTAMP` con `CURRENT_TIMESTAMP` (bitácora, préstamos) quedaban 4 horas adelantadas.
