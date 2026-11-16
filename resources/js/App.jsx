@@ -11,6 +11,10 @@ import AdministrarMenu from './pages/cu01/AdministrarMenu';
 import GestionUsuarios from './pages/cu01/GestionUsuarios';
 import MatrizAccesos from './pages/cu01/MatrizAccesos';
 import MiPerfil from './pages/cu01/MiPerfil';
+import DisponibilidadPersonal from './pages/cu02/DisponibilidadPersonal';
+import GestionAusencias from './pages/cu02/GestionAusencias';
+import GestionPersonal from './pages/cu02/GestionPersonal';
+import GestionTurnos from './pages/cu02/GestionTurnos';
 
 /*
  * Pantallas del menú (documento, Anexo C): ruta, permiso que la habilita y CU.
@@ -21,8 +25,8 @@ const PANTALLAS = [
     { ruta: '/panel', titulo: 'Panel Analítico', permiso: 'dashboard.ver', cu: 'CU-07' },
     { ruta: '/usuarios', titulo: 'Gestión de Usuarios', permiso: 'usuarios.listar', cu: 'CU-01', pantalla: GestionUsuarios },
     { ruta: '/perfil', titulo: 'Mi Perfil', permiso: null, cu: 'CU-01', pantalla: MiPerfil },
-    { ruta: '/personal', titulo: 'Gestión de Personal', permiso: 'personal.listar', cu: 'CU-02' },
-    { ruta: '/turnos', titulo: 'Gestión de Turnos', permiso: 'turnos.listar', cu: 'CU-02' },
+    { ruta: '/personal', titulo: 'Gestión de Personal', permiso: 'personal.listar', cu: 'CU-02', pantalla: GestionPersonal },
+    { ruta: '/turnos', titulo: 'Gestión de Turnos', permiso: 'turnos.listar', cu: 'CU-02', pantalla: GestionTurnos },
     { ruta: '/recursos', titulo: 'Inventario de Recursos', permiso: 'recursos.listar', cu: 'CU-03' },
     { ruta: '/prestamos', titulo: 'Préstamos de Recursos', permiso: 'prestamos.listar', cu: 'CU-03' },
     { ruta: '/coberturas', titulo: 'Agenda de Coberturas', permiso: 'coberturas.listar', cu: 'CU-04' },
@@ -35,6 +39,12 @@ const PANTALLAS = [
     { ruta: '/seguridad/matriz', titulo: 'Matriz de Accesos', permiso: 'seguridad.matriz.ver', cu: 'CU-01', pantalla: MatrizAccesos },
     { ruta: '/seguridad/menu', titulo: 'Menú Dinámico', permiso: 'seguridad.menu', cu: 'CU-01', pantalla: AdministrarMenu },
     { ruta: '/seguridad/bitacora', titulo: 'Bitácora de Accesos', permiso: 'bitacora.ver', cu: 'CU-08' },
+];
+
+/* Pantallas a las que se llega desde otra pantalla (no desde el menú). */
+const SUBPANTALLAS = [
+    { ruta: '/personal/ausencias', permiso: 'ausencias.listar', pantalla: GestionAusencias },
+    { ruta: '/personal/disponibilidad', permiso: 'personal.disponibilidad', pantalla: DisponibilidadPersonal },
 ];
 
 export default function App() {
@@ -58,6 +68,10 @@ export default function App() {
                             </RutaPrivada>
                         )}
                     />
+                ))}
+
+                {SUBPANTALLAS.map((p) => (
+                    <Route key={p.ruta} path={p.ruta.slice(1)} element={<RutaPrivada permiso={p.permiso}><p.pantalla /></RutaPrivada>} />
                 ))}
 
                 <Route path="*" element={<NoEncontrada />} />

@@ -17,8 +17,6 @@ class Cu01GestionUsuariosTest extends TestCase
 {
     use DatabaseTransactions;
 
-    private const CLAVE = 'canal11';
-
     // ── Gestión de Usuarios ───────────────────────────────────────────────
 
     public function test_el_director_lista_y_filtra_usuarios(): void
@@ -212,13 +210,6 @@ class Cu01GestionUsuariosTest extends TestCase
     }
 
     // ── Ayudas ────────────────────────────────────────────────────────────
-
-    private function como(string $correo): static
-    {
-        $this->app['auth']->forgetGuards(); // cada petición se autentica de nuevo con su token
-
-        return $this->withToken(Usuario::where('correo', $correo)->firstOrFail()->createToken('prueba')->plainTextToken);
-    }
 
     private function nuevo(array $cambios = []): array
     {
