@@ -8,7 +8,10 @@ use App\Http\Controllers\Api\V1\MenuController;
 use App\Http\Controllers\Api\V1\PerfilController;
 use App\Http\Controllers\Api\V1\PermisoController;
 use App\Http\Controllers\Api\V1\PersonalController;
+use App\Http\Controllers\Api\V1\PrestamoController;
+use App\Http\Controllers\Api\V1\RecursoController;
 use App\Http\Controllers\Api\V1\RolController;
+use App\Http\Controllers\Api\V1\TipoRecursoController;
 use App\Http\Controllers\Api\V1\TurnoController;
 use App\Http\Controllers\Api\V1\UsuarioController;
 use App\Http\Controllers\Api\V1\VisitaController;
@@ -63,6 +66,18 @@ Route::middleware(['auth:sanctum', 'activo'])->group(function () {
     Route::post('/turnos', [TurnoController::class, 'store'])->middleware('permiso:turnos.crear');
     Route::get('/ausencias', [AusenciaController::class, 'index'])->middleware('permiso:ausencias.listar');
     Route::post('/ausencias', [AusenciaController::class, 'store'])->middleware('permiso:ausencias.crear');
+
+    // CU-03 Inventario, Asignación y Mantenimiento de Equipos y Unidades Móviles ─
+    Route::get('/recursos', [RecursoController::class, 'index'])->middleware('permiso:recursos.listar');
+    Route::post('/recursos', [RecursoController::class, 'store'])->middleware('permiso:recursos.crear');
+    Route::put('/recursos/{recurso}', [RecursoController::class, 'update'])->middleware('permiso:recursos.editar');
+    Route::delete('/recursos/{recurso}', [RecursoController::class, 'destroy'])->middleware('permiso:recursos.baja');
+    Route::post('/recursos/{recurso}/incidencias', [RecursoController::class, 'incidencia'])->middleware('permiso:recursos.incidencia');
+    Route::post('/recursos/{recurso}/alta', [RecursoController::class, 'alta'])->middleware('permiso:recursos.alta');
+    Route::get('/tipos-recurso', [TipoRecursoController::class, 'index'])->middleware('permiso:recursos.listar');
+    Route::get('/prestamos', [PrestamoController::class, 'index'])->middleware('permiso:prestamos.listar');
+    Route::post('/prestamos', [PrestamoController::class, 'store'])->middleware('permiso:prestamos.crear');
+    Route::put('/prestamos/{prestamo}/devolucion', [PrestamoController::class, 'devolver'])->middleware('permiso:prestamos.devolver');
 
     // CU-08 Reportes y Estadísticas: contador de visitas por página
     Route::get('/visitas', [VisitaController::class, 'index'])->middleware('permiso:bitacora.ver');
