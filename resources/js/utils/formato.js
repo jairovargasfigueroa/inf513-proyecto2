@@ -1,10 +1,16 @@
 /** Formatos de fecha y hora para Bolivia (es-BO). */
 
-const fecha = (valor) => new Date(String(valor).replace(' ', 'T'));
+// 'AAAA-MM-DD' sola se interpretaría en UTC (el día anterior en Bolivia): se le agrega la hora local.
+const fecha = (valor) => {
+    const t = String(valor).replace(' ', 'T');
+    return new Date(t.length === 10 ? `${t}T00:00:00` : t);
+};
+
+const mayuscula = (t) => t.charAt(0).toUpperCase() + t.slice(1);
 
 export const fechaCorta = (valor) => (valor ? fecha(valor).toLocaleDateString('es-BO', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—');
 
-export const fechaLarga = (valor) => (valor ? fecha(valor).toLocaleDateString('es-BO', { weekday: 'long', day: 'numeric', month: 'long' }) : '—');
+export const fechaLarga = (valor) => (valor ? mayuscula(fecha(valor).toLocaleDateString('es-BO', { weekday: 'long', day: 'numeric', month: 'long' })) : '—');
 
 export const fechaHora = (valor) => (valor ? `${fechaCorta(valor)} ${String(valor).replace('T', ' ').slice(11, 16)}` : '—');
 
