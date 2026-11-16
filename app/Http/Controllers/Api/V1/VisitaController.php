@@ -27,7 +27,9 @@ class VisitaController extends Controller
     public function index(): JsonResponse
     {
         return response()->json([
-            'data' => ContadorVisita::orderByDesc('cantidad')->get(['pagina', 'cantidad', 'ultima_visita']),
+            'data' => ContadorVisita::orderByDesc('cantidad')
+                ->get(['pagina', 'cantidad', DB::raw("to_char(ultima_visita, 'YYYY-MM-DD HH24:MI') AS ultima_visita")])
+                ->map(fn ($v) => ['pagina' => $v->pagina, 'cantidad' => $v->cantidad, 'ultima_visita' => $v->getRawOriginal('ultima_visita')]),
         ]);
     }
 }

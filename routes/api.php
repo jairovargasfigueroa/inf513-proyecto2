@@ -4,6 +4,8 @@ use App\Http\Controllers\Api\V1\AnaliticaController;
 use App\Http\Controllers\Api\V1\AsignacionPersonalController;
 use App\Http\Controllers\Api\V1\AusenciaController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\BitacoraComandoController;
+use App\Http\Controllers\Api\V1\BitacoraController;
 use App\Http\Controllers\Api\V1\BusquedaController;
 use App\Http\Controllers\Api\V1\CoberturaController;
 use App\Http\Controllers\Api\V1\CorteController;
@@ -21,6 +23,7 @@ use App\Http\Controllers\Api\V1\PlantillaController;
 use App\Http\Controllers\Api\V1\PrestamoController;
 use App\Http\Controllers\Api\V1\ProgramaController;
 use App\Http\Controllers\Api\V1\RecursoController;
+use App\Http\Controllers\Api\V1\ReporteController;
 use App\Http\Controllers\Api\V1\ReservaRecursoController;
 use App\Http\Controllers\Api\V1\RolController;
 use App\Http\Controllers\Api\V1\RotuloController;
@@ -147,6 +150,14 @@ Route::middleware(['auth:sanctum', 'activo'])->group(function () {
     Route::get('/analitica/produccion', [AnaliticaController::class, 'produccion'])->middleware('permiso:analitica.ver');
     Route::get('/analitica/coberturas', [AnaliticaController::class, 'coberturas'])->middleware('permiso:analitica.ver');
 
-    // CU-08 Reportes y Estadísticas: contador de visitas por página
+    // CU-08 Reportes y Estadísticas ──────────────────────────────────────────
+    Route::get('/reportes/coberturas', [ReporteController::class, 'coberturas'])->middleware('permiso:reportes.ver');
+    Route::get('/reportes/recursos', [ReporteController::class, 'recursos'])->middleware('permiso:reportes.ver');
+    Route::get('/reportes/mantenimiento', [ReporteController::class, 'mantenimiento'])->middleware('permiso:reportes.mantenimiento');
+    Route::get('/reportes/notas', [ReporteController::class, 'notas'])->middleware('permiso:reportes.ver');
+    Route::get('/bitacora-comandos', [BitacoraComandoController::class, 'index'])->middleware('permiso:bitacora.ver');
+    Route::get('/bitacora', [BitacoraController::class, 'index'])->middleware('permiso:bitacora.ver');
+    Route::get('/bitacora/intentos-fallidos', [BitacoraController::class, 'intentosFallidos'])->middleware('permiso:bitacora.fallidos');
+    Route::get('/bitacora/recursos-top', [BitacoraController::class, 'recursosTop'])->middleware('permiso:bitacora.ver');
     Route::get('/visitas', [VisitaController::class, 'index'])->middleware('permiso:bitacora.ver');
 });
