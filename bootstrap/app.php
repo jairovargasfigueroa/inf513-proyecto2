@@ -1,5 +1,6 @@
 <?php
 
+use App\Exceptions\ReglaNegocioException;
 use App\Http\Middleware\RegistrarBitacora;
 use App\Http\Middleware\UsuarioActivo;
 use App\Http\Middleware\VerificarPermiso;
@@ -36,6 +37,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         // Toda respuesta de la API es JSON, con mensajes en español (RNF-36).
         $exceptions->shouldRenderJsonWhen(fn (Request $request) => $request->is('api/*'));
+
+        // Una regla de negocio que se cumple (409) no es un error del sistema: no va al log.
+        $exceptions->dontReport(ReglaNegocioException::class);
 
         $json = fn (string $mensaje, int $estado) => response()->json(['message' => $mensaje], $estado);
 
