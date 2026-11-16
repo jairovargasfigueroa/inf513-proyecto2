@@ -1,12 +1,15 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AusenciaController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BusquedaController;
 use App\Http\Controllers\Api\V1\GrillaController;
 use App\Http\Controllers\Api\V1\MenuController;
 use App\Http\Controllers\Api\V1\PerfilController;
 use App\Http\Controllers\Api\V1\PermisoController;
+use App\Http\Controllers\Api\V1\PersonalController;
 use App\Http\Controllers\Api\V1\RolController;
+use App\Http\Controllers\Api\V1\TurnoController;
 use App\Http\Controllers\Api\V1\UsuarioController;
 use App\Http\Controllers\Api\V1\VisitaController;
 use Illuminate\Support\Facades\Route;
@@ -49,6 +52,17 @@ Route::middleware(['auth:sanctum', 'activo'])->group(function () {
     Route::post('/menus', [MenuController::class, 'store'])->middleware('permiso:seguridad.menu');
     Route::put('/menus/{menu}', [MenuController::class, 'update'])->middleware('permiso:seguridad.menu');
     Route::put('/roles/{rol}/menus', [MenuController::class, 'asignar'])->middleware('permiso:seguridad.menu');
+
+    // CU-02 Gestión de Personal de Prensa, Turnos y Disponibilidad ─────────
+    Route::get('/personal/disponibilidad', [PersonalController::class, 'disponibilidad'])->middleware('permiso:personal.disponibilidad');
+    Route::get('/personal', [PersonalController::class, 'index'])->middleware('permiso:personal.listar');
+    Route::post('/personal', [PersonalController::class, 'store'])->middleware('permiso:personal.crear');
+    Route::put('/personal/{personal}', [PersonalController::class, 'update'])->middleware('permiso:personal.editar');
+    Route::delete('/personal/{personal}', [PersonalController::class, 'destroy'])->middleware('permiso:personal.desactivar');
+    Route::get('/turnos', [TurnoController::class, 'index'])->middleware('permiso:turnos.listar');
+    Route::post('/turnos', [TurnoController::class, 'store'])->middleware('permiso:turnos.crear');
+    Route::get('/ausencias', [AusenciaController::class, 'index'])->middleware('permiso:ausencias.listar');
+    Route::post('/ausencias', [AusenciaController::class, 'store'])->middleware('permiso:ausencias.crear');
 
     // CU-08 Reportes y Estadísticas: contador de visitas por página
     Route::get('/visitas', [VisitaController::class, 'index'])->middleware('permiso:bitacora.ver');

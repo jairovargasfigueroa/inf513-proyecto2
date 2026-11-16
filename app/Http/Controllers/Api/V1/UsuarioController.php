@@ -30,6 +30,7 @@ class UsuarioController extends Controller
             'buscar' => ['nullable', 'string', 'max:100'],
             'rol_id' => ['nullable', 'integer'],
             'estado' => ['nullable', 'in:activo,inactivo'],
+            'sin_ficha' => ['nullable', 'boolean'],
         ]);
 
         $usuarios = Usuario::with('rol')
@@ -41,6 +42,8 @@ class UsuarioController extends Controller
             })
             ->when($filtros['rol_id'] ?? null, fn ($q, $rol) => $q->where('rol_id', $rol))
             ->when($filtros['estado'] ?? null, fn ($q, $estado) => $q->where('estado', $estado))
+            // FormularioPersonal (CU-02) solo ofrece usuarios que aún no tienen ficha.
+            ->when($request->boolean('sin_ficha'), fn ($q) => $q->whereDoesntHave('personal'))
             ->orderBy('apellido')
             ->orderBy('nombre')
             ->paginate(15);
