@@ -17,6 +17,9 @@ import GestionPersonal from './pages/cu02/GestionPersonal';
 import GestionTurnos from './pages/cu02/GestionTurnos';
 import InventarioRecursos from './pages/cu03/InventarioRecursos';
 import PrestamosRecursos from './pages/cu03/PrestamosRecursos';
+import AgendaCoberturas from './pages/cu04/AgendaCoberturas';
+import DetalleCobertura from './pages/cu04/DetalleCobertura';
+import HojaAsignacion from './pages/cu04/HojaAsignacion';
 
 /*
  * Pantallas del menú (documento, Anexo C): ruta, permiso que la habilita y CU.
@@ -31,7 +34,7 @@ const PANTALLAS = [
     { ruta: '/turnos', titulo: 'Gestión de Turnos', permiso: 'turnos.listar', cu: 'CU-02', pantalla: GestionTurnos },
     { ruta: '/recursos', titulo: 'Inventario de Recursos', permiso: 'recursos.listar', cu: 'CU-03', pantalla: InventarioRecursos },
     { ruta: '/prestamos', titulo: 'Préstamos de Recursos', permiso: 'prestamos.listar', cu: 'CU-03', pantalla: PrestamosRecursos },
-    { ruta: '/coberturas', titulo: 'Agenda de Coberturas', permiso: 'coberturas.listar', cu: 'CU-04' },
+    { ruta: '/coberturas', titulo: 'Agenda de Coberturas', permiso: 'coberturas.listar', cu: 'CU-04', pantalla: AgendaCoberturas },
     { ruta: '/notas', titulo: 'Gestión de Notas', permiso: 'notas.listar', cu: 'CU-05' },
     { ruta: '/programas', titulo: 'Programas y Grilla', permiso: 'programas.listar', cu: 'CU-06' },
     { ruta: '/plantillas', titulo: 'Plantillas de Emisión', permiso: 'plantillas.listar', cu: 'CU-06' },
@@ -47,6 +50,8 @@ const PANTALLAS = [
 const SUBPANTALLAS = [
     { ruta: '/personal/ausencias', permiso: 'ausencias.listar', pantalla: GestionAusencias },
     { ruta: '/personal/disponibilidad', permiso: 'personal.disponibilidad', pantalla: DisponibilidadPersonal },
+    { ruta: '/coberturas/:id', permiso: 'coberturas.listar', pantalla: DetalleCobertura },
+    { ruta: '/coberturas/:id/hoja', permiso: 'coberturas.hoja', pantalla: HojaAsignacion },
 ];
 
 export default function App() {

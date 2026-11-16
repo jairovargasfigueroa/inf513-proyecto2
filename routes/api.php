@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AsignacionPersonalController;
 use App\Http\Controllers\Api\V1\AusenciaController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BusquedaController;
+use App\Http\Controllers\Api\V1\CoberturaController;
 use App\Http\Controllers\Api\V1\GrillaController;
 use App\Http\Controllers\Api\V1\MenuController;
 use App\Http\Controllers\Api\V1\PerfilController;
@@ -10,6 +12,7 @@ use App\Http\Controllers\Api\V1\PermisoController;
 use App\Http\Controllers\Api\V1\PersonalController;
 use App\Http\Controllers\Api\V1\PrestamoController;
 use App\Http\Controllers\Api\V1\RecursoController;
+use App\Http\Controllers\Api\V1\ReservaRecursoController;
 use App\Http\Controllers\Api\V1\RolController;
 use App\Http\Controllers\Api\V1\TipoRecursoController;
 use App\Http\Controllers\Api\V1\TurnoController;
@@ -78,6 +81,20 @@ Route::middleware(['auth:sanctum', 'activo'])->group(function () {
     Route::get('/prestamos', [PrestamoController::class, 'index'])->middleware('permiso:prestamos.listar');
     Route::post('/prestamos', [PrestamoController::class, 'store'])->middleware('permiso:prestamos.crear');
     Route::put('/prestamos/{prestamo}/devolucion', [PrestamoController::class, 'devolver'])->middleware('permiso:prestamos.devolver');
+
+    // CU-04 Planificar Coberturas, Validar Conflictos de Operación y Liberar Recursos
+    Route::get('/coberturas', [CoberturaController::class, 'index'])->middleware('permiso:coberturas.listar');
+    Route::post('/coberturas', [CoberturaController::class, 'store'])->middleware('permiso:coberturas.crear');
+    Route::get('/coberturas/{cobertura}', [CoberturaController::class, 'show'])->middleware('permiso:coberturas.listar');
+    Route::put('/coberturas/{cobertura}', [CoberturaController::class, 'update'])->middleware('permiso:coberturas.editar');
+    Route::delete('/coberturas/{cobertura}', [CoberturaController::class, 'destroy'])->middleware('permiso:coberturas.cancelar');
+    Route::post('/coberturas/{cobertura}/duplicar', [CoberturaController::class, 'duplicar'])->middleware('permiso:coberturas.duplicar');
+    Route::get('/coberturas/{cobertura}/hoja', [CoberturaController::class, 'hoja'])->middleware('permiso:coberturas.hoja');
+    Route::post('/coberturas/{cobertura}/retorno', [CoberturaController::class, 'retorno'])->middleware('permiso:coberturas.retorno');
+    Route::post('/coberturas/{cobertura}/personal', [AsignacionPersonalController::class, 'store'])->middleware('permiso:coberturas.asignar');
+    Route::delete('/coberturas/{cobertura}/personal/{personal}', [AsignacionPersonalController::class, 'destroy'])->whereNumber('personal')->middleware('permiso:coberturas.asignar');
+    Route::post('/coberturas/{cobertura}/recursos', [ReservaRecursoController::class, 'store'])->middleware('permiso:coberturas.reservar');
+    Route::delete('/coberturas/{cobertura}/recursos/{recurso}', [ReservaRecursoController::class, 'destroy'])->whereNumber('recurso')->middleware('permiso:coberturas.reservar');
 
     // CU-08 Reportes y Estadísticas: contador de visitas por página
     Route::get('/visitas', [VisitaController::class, 'index'])->middleware('permiso:bitacora.ver');
