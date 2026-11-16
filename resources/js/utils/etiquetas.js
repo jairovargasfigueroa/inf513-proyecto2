@@ -69,3 +69,13 @@ export const TONO_NOTA = { borrador: 'neutro', en_revision: 'acento', observada:
 export const TIPOS_MATERIAL = { video: 'Video', sot: 'SOT', grafico: 'Gráfico', foto: 'Foto', audio: 'Audio' };
 
 export const ESTADOS_MATERIAL = { pendiente: 'Pendiente', ingestado: 'Ingestado', en_edicion: 'En edición', listo: 'Listo para emitir' };
+
+export const TIPOS_PROGRAMA = { noticiero: 'Noticiero', especial: 'Especial', otro: 'Otro (solo referencia)' };
+
+export const DIAS_LARGOS = { 1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 4: 'Jueves', 5: 'Viernes', 6: 'Sábado', 7: 'Domingo' };
+
+export const ESTADOS_ESCALETA = { borrador: 'Borrador', cerrada: 'Cerrada', emitida: 'Emitida' };
+
+export const TIPOS_ITEM = {
+    apertura: 'Apertura', titulares: 'Titulares', nota: 'Nota', enlace_vivo: 'Enlace en vivo', entrevista: 'Entrevista', despedida: 'Despedida', otro: 'Otro', corte: 'Corte comercial',
+};
