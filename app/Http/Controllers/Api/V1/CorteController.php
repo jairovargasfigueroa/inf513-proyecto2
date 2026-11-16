@@ -19,9 +19,7 @@ class CorteController extends Controller
 {
     use ReglasPlantilla;
 
-    public function __construct(private CalculadoraTiempos $tiempos)
-    {
-    }
+    public function __construct(private CalculadoraTiempos $tiempos) {}
 
     /** POST /api/v1/plantillas/{id}/cortes (plantillas.editar) → 201 + tiempo neto. */
     public function store(Request $request, int $plantilla): JsonResponse
@@ -60,7 +58,7 @@ class CorteController extends Controller
             'numero.unique' => 'Ya existe un corte con ese número en la plantilla.',
         ], ['numero' => 'número', 'minuto_inicio' => 'minuto de inicio', 'duracion' => 'duración (segundos)']);
 
-        if ($d['minuto_inicio'] * 60 + $d['duracion'] > $p->duracion_total) {
+        if ($p->duracion_total < $d['minuto_inicio'] * 60 + $d['duracion']) {
             throw new ReglaNegocioException('El corte termina después del final del programa ('.intdiv($p->duracion_total, 60).' minutos).');
         }
 

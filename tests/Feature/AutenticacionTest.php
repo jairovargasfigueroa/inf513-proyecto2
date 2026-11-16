@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\BitacoraAcceso;
 use App\Models\Usuario;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;

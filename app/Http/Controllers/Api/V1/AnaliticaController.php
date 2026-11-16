@@ -13,9 +13,7 @@ use Illuminate\Http\JsonResponse;
  */
 class AnaliticaController extends Controller
 {
-    public function __construct(private Estadisticas $estadisticas)
-    {
-    }
+    public function __construct(private Estadisticas $estadisticas) {}
 
     /** GET /api/v1/analitica/produccion?desde&hasta (analitica.ver). */
     public function produccion(PeriodoRequest $request): JsonResponse

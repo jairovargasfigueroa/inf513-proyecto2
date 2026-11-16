@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Cobertura;
 use App\Models\Personal;
 use App\Models\Recurso;
-use App\Models\Usuario;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;

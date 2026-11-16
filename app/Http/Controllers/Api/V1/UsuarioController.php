@@ -19,9 +19,7 @@ use Illuminate\Support\Facades\DB;
  */
 class UsuarioController extends Controller
 {
-    public function __construct(private ReglasUsuarios $reglas)
-    {
-    }
+    public function __construct(private ReglasUsuarios $reglas) {}
 
     /** GET /api/v1/usuarios?buscar=&rol_id=&estado= (usuarios.listar). */
     public function index(Request $request): AnonymousResourceCollection
