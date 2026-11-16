@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AnaliticaController;
 use App\Http\Controllers\Api\V1\AsignacionPersonalController;
 use App\Http\Controllers\Api\V1\AusenciaController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BusquedaController;
 use App\Http\Controllers\Api\V1\CoberturaController;
 use App\Http\Controllers\Api\V1\CorteController;
+use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\EscaletaController;
 use App\Http\Controllers\Api\V1\GrillaController;
 use App\Http\Controllers\Api\V1\ItemEscaletaController;
@@ -139,6 +141,11 @@ Route::middleware(['auth:sanctum', 'activo'])->group(function () {
     Route::put('/items/{item}', [ItemEscaletaController::class, 'update'])->whereNumber('item')->middleware('permiso:escaletas.items');
     Route::post('/items/{item}/flotar', [ItemEscaletaController::class, 'flotar'])->whereNumber('item')->middleware('permiso:escaletas.items');
     Route::delete('/items/{item}', [ItemEscaletaController::class, 'destroy'])->whereNumber('item')->middleware('permiso:escaletas.items');
+
+    // CU-07 Analítica Periodística (panel analítico: consigna, punto 8) ──────
+    Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('permiso:dashboard.ver');
+    Route::get('/analitica/produccion', [AnaliticaController::class, 'produccion'])->middleware('permiso:analitica.ver');
+    Route::get('/analitica/coberturas', [AnaliticaController::class, 'coberturas'])->middleware('permiso:analitica.ver');
 
     // CU-08 Reportes y Estadísticas: contador de visitas por página
     Route::get('/visitas', [VisitaController::class, 'index'])->middleware('permiso:bitacora.ver');
