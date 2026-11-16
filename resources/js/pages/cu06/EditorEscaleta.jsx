@@ -47,6 +47,8 @@ export default function EditorEscaleta() {
     const [item, setItem] = useState({ abierto: false, datos: null, bloque: 'A' });
     const [emitir, setEmitir] = useState(false);
     const [pendientes, setPendientes] = useState(null);
+    const [arrastrado, setArrastrado] = useState(null);
+    const [sobre, setSobre] = useState(null); // id del ítem (o 'bloque-X') bajo el cursor al arrastrar
 
     const cargar = useCallback(() => {
         api.get(`/escaletas/${id}`).then(({ data }) => setEsc(data)).catch((e) => setError(mensajeDeError(e)));
@@ -72,11 +74,38 @@ export default function EditorEscaleta() {
         }
     };
 
+    /**
+     * onReordenar: pone el ítem antes de `antesDe` (o al final) en el bloque
+     * destino. La posición se calcula con el orden real del bloque (incluye
+     * los flotados y las bajas), que es el que renumera el servidor.
+     */
+    const reubicar = (it, bloqueDestino, antesDe) => {
+        const base = esc.items
+            .filter((x) => x.bloque === bloqueDestino && x.tipo !== 'corte' && x.id !== it.id)
+            .sort((a, b) => a.orden - b.orden);
+        const orden = antesDe ? base.findIndex((x) => x.id === antesDe.id) + 1 : base.length + 1;
+        llamar(() => api.put(`/items/${it.id}`, {
+            bloque: bloqueDestino, orden, tipo: it.tipo, nota_id: it.nota_id, titulo: it.tipo === 'nota' ? null : it.titulo,
+            presentador_id: it.presentador_id, duracion_estimada: it.duracion_estimada,
+        }));
+    };
+
+    // Subir y bajar con botones (accesible con teclado).
     const mover = (it, delta, lista) => {
         const visibles = lista.filter((x) => x.tipo !== 'corte' && x.estado !== 'baja');
-        const pos = visibles.findIndex((x) => x.id === it.id) + 1 + delta;
-        if (pos < 1 || pos > visibles.length) return;
-        llamar(() => api.put(`/items/${it.id}`, { bloque: it.bloque, orden: pos, tipo: it.tipo, nota_id: it.nota_id, titulo: it.tipo === 'nota' ? null : it.titulo, presentador_id: it.presentador_id, duracion_estimada: it.duracion_estimada }));
+        const i = visibles.findIndex((x) => x.id === it.id);
+        if (i + delta < 0 || i + delta >= visibles.length) return;
+        reubicar(it, it.bloque, delta < 0 ? visibles[i - 1] : visibles[i + 2] ?? null);
+    };
+
+    // Arrastrar y soltar: sobre otro ítem lo pone antes; sobre el bloque, al final.
+    const movible = (it) => editable && it.tipo !== 'corte' && it.estado !== 'baja';
+    const soltar = (ev, bloque, antesDe = null) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        setSobre(null);
+        if (arrastrado && arrastrado.id !== antesDe?.id) reubicar(arrastrado, bloque, antesDe);
+        setArrastrado(null);
     };
 
     const cambiarEstado = (estado, extra = {}) => llamar(() => api.put(`/escaletas/${e.id}/estado`, { estado, ...extra }));
@@ -125,9 +154,21 @@ export default function EditorEscaleta() {
                                 {editable && <button type="button" className="boton-secundario" onClick={() => setItem({ abierto: true, datos: null, bloque: b.bloque })}><Plus className="h-4 w-4" aria-hidden="true" /> Agregar ítem</button>}
                             </div>
                         </div>
-                        <ol className="divide-y divide-borde">
+                        <ol
+                            className={`divide-y divide-borde rounded-tema ${sobre === `bloque-${b.bloque}` ? 'outline outline-2 outline-acento' : ''}`}
+                            onDragOver={(ev) => { if (arrastrado) { ev.preventDefault(); setSobre(`bloque-${b.bloque}`); } }}
+                            onDrop={(ev) => soltar(ev, b.bloque)}
+                        >
                             {lista.map((it) => (
-                                <li key={it.id} className={`flex flex-wrap items-center gap-3 py-2 ${it.estado === 'baja' ? 'opacity-50 line-through' : it.estado === 'flotado' ? 'opacity-70' : ''} ${it.tipo === 'corte' ? 'bg-fondo px-2' : ''}`}>
+                                <li
+                                    key={it.id}
+                                    draggable={movible(it)}
+                                    onDragStart={(ev) => { setArrastrado(it); ev.dataTransfer.effectAllowed = 'move'; }}
+                                    onDragEnd={() => { setArrastrado(null); setSobre(null); }}
+                                    onDragOver={(ev) => { if (arrastrado && it.tipo !== 'corte') { ev.preventDefault(); ev.stopPropagation(); setSobre(it.id); } }}
+                                    onDrop={(ev) => (it.tipo === 'corte' ? soltar(ev, b.bloque) : soltar(ev, b.bloque, it))}
+                                    className={`flex flex-wrap items-center gap-3 py-2 ${movible(it) ? 'cursor-grab' : ''} ${arrastrado?.id === it.id ? 'opacity-40' : ''} ${sobre === it.id ? 'border-t-2 border-t-acento' : ''} ${it.estado === 'baja' ? 'opacity-50 line-through' : it.estado === 'flotado' ? 'opacity-70' : ''} ${it.tipo === 'corte' ? 'bg-fondo px-2' : ''}`}
+                                >
                                     <span className="w-16 font-mono font-semibold">{it.pagina ?? '—'}</span>
                                     <span className="min-w-[12rem] flex-1">
                                         <span className="block font-medium">{it.slug ? <span className="font-mono">{it.slug}</span> : null} {it.titulo}</span>

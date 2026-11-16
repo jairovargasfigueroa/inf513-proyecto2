@@ -18,9 +18,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class EscaletaController extends Controller
 {
-    public function __construct(private CalculadoraTiempos $tiempos)
-    {
-    }
+    public function __construct(private CalculadoraTiempos $tiempos) {}
 
     /** GET /api/v1/escaletas?fecha= (escaletas.listar): escaletas de esa semana y horarios del día para generar. */
     public function index(Request $request): JsonResponse

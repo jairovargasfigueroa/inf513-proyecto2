@@ -22,9 +22,7 @@ class CoberturaController extends Controller
     /** Máximo de copias que genera una duplicación recurrente. */
     private const MAX_COPIAS = 60;
 
-    public function __construct(private ValidadorConflictos $conflictos)
-    {
-    }
+    public function __construct(private ValidadorConflictos $conflictos) {}
 
     /** GET /api/v1/coberturas?fecha=&vista=dia|semana&estado=&tipo= (coberturas.listar). */
     public function index(Request $request): JsonResponse

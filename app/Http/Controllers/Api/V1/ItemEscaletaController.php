@@ -18,9 +18,7 @@ class ItemEscaletaController extends Controller
 {
     private const TIPOS = ['apertura', 'titulares', 'nota', 'enlace_vivo', 'entrevista', 'despedida', 'otro'];
 
-    public function __construct(private CalculadoraTiempos $tiempos)
-    {
-    }
+    public function __construct(private CalculadoraTiempos $tiempos) {}
 
     /** POST /api/v1/escaletas/{id}/items (escaletas.items) → 201 + balance del bloque. */
     public function store(Request $request, int $escaleta): JsonResponse

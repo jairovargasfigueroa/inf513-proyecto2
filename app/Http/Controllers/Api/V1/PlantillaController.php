@@ -20,9 +20,7 @@ class PlantillaController extends Controller
 {
     use ReglasPlantilla;
 
-    public function __construct(private CalculadoraTiempos $tiempos)
-    {
-    }
+    public function __construct(private CalculadoraTiempos $tiempos) {}
 
     /** GET /api/v1/plantillas (plantillas.listar). */
     public function index(): JsonResponse

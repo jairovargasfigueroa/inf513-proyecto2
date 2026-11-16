@@ -18,9 +18,7 @@ use Illuminate\Http\Request;
  */
 class PersonalController extends Controller
 {
-    public function __construct(private ValidadorConflictos $conflictos)
-    {
-    }
+    public function __construct(private ValidadorConflictos $conflictos) {}
 
     /** GET /api/v1/personal?buscar=&cargo=&estado=&todos=1 (personal.listar). */
     public function index(Request $request): JsonResponse
