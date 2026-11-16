@@ -119,6 +119,24 @@
     --c-exito: 255 255 255;
 }
 
+/*
+ * Colores de los gráficos: paleta categórica validada para daltonismo (orden
+ * fijo: la serie 1 siempre es la misma entidad). El modo noche usa los mismos
+ * tonos ajustados para fondo oscuro.
+ */
+:root {
+    --serie-1: #2a78d6;
+    --serie-2: #eb6834;
+    --serie-3: #1baf7a;
+    --serie-4: #eda100;
+}
+[data-modo='noche'] {
+    --serie-1: #3987e5;
+    --serie-2: #d95926;
+    --serie-3: #199e70;
+    --serie-4: #c98500;
+}
+
 /* Tamaño de letra: --escala va de 0.8 a 1.5 (botones A−, A, A+). */
 html {
     font-size: calc(var(--fuente-base) * var(--escala, 1));
@@ -130,4 +148,50 @@ body {
 :focus-visible {
     outline: 3px solid rgb(var(--c-acento));
     outline-offset: 2px;
+}
+
+/* Estilo único del sitio: los componentes usan solo los tokens del tema. */
+@layer components {
+    .tarjeta {
+        @apply rounded-tema border border-borde bg-superficie p-5;
+    }
+    [data-tema='jovenes'] .tarjeta {
+        @apply shadow-md;
+    }
+    .titulo-pagina {
+        @apply text-2xl font-bold;
+    }
+    .campo {
+        @apply block w-full rounded-tema border border-borde bg-fondo px-3 py-2 text-texto placeholder:text-suave;
+    }
+    .boton {
+        @apply inline-flex items-center gap-2 rounded-tema bg-primario px-4 py-2 font-semibold text-sobre-primario hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60;
+    }
+    .boton-peligro {
+        @apply inline-flex items-center gap-2 rounded-tema bg-peligro px-4 py-2 font-semibold text-sobre-primario hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60;
+    }
+    .boton-secundario {
+        @apply inline-flex items-center gap-2 rounded-tema border border-borde px-3 py-2 text-sm font-medium hover:bg-fondo;
+    }
+    .boton-icono {
+        @apply inline-grid min-h-[2.25rem] min-w-[2.25rem] place-items-center px-2 text-sm font-semibold hover:bg-fondo disabled:opacity-40;
+    }
+    .boton-icono[aria-pressed='true'] {
+        @apply bg-primario text-sobre-primario;
+    }
+    .tabla {
+        @apply w-full text-left text-sm;
+    }
+    .tabla th {
+        @apply border-b border-borde px-3 py-2 font-semibold text-suave;
+    }
+    .tabla td {
+        @apply border-b border-borde px-3 py-2;
+    }
+}
+
+/* En el tema niños los íconos y botones son más grandes. */
+[data-tema='ninos'] .boton,
+[data-tema='ninos'] .boton-icono {
+    @apply text-base;
 }

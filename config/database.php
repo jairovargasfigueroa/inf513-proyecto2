@@ -54,6 +54,8 @@ return [
             'prefix' => '',
             'prefix_indexes' => true,
             'search_path' => env('DB_SCHEMA', 'public'),
+            // Las columnas TIMESTAMP (CURRENT_TIMESTAMP, LOCALTIMESTAMP) se guardan en hora de Bolivia.
+            'timezone' => env('DB_TIMEZONE', 'America/La_Paz'),
             'sslmode' => 'prefer',
         ],
 
