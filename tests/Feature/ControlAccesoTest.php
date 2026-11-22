@@ -2,7 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\Menu;
+use App\Models\PermisoWeb;
+use App\Models\Rol;
 use App\Models\Usuario;
+use Database\Seeders\SeguridadSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
@@ -98,8 +102,32 @@ class ControlAccesoTest extends TestCase
             ->assertJsonPath('errors.q.0', 'El campo texto a buscar debe tener al menos 2 caracteres.');
     }
 
+    public function test_el_camarografo_llega_a_las_notas_y_el_administrador_a_la_bitacora_de_comandos(): void
+    {
+        $this->como('jorge.mendoza@canal11.test')->getJson('/api/v1/notas')->assertOk();
+        $this->como('jorge.mendoza@canal11.test')->getJson('/api/v1/auth/menu')->assertJsonFragment(['ruta' => '/notas']);
+        $this->como('admin@canal11.test')->getJson('/api/v1/auth/menu')->assertJsonFragment(['ruta' => '/reportes/bitacora-comandos']);
+    }
+
     private function tokenDe(string $correo): string
     {
         return Usuario::where('correo', $correo)->firstOrFail()->createToken('prueba')->plainTextToken;
+    }
+
+    public function test_volver_a_sembrar_no_pisa_la_matriz_ni_el_menu_editados(): void
+    {
+        $rol = Rol::where('nombre', 'Jefe de Prensa')->firstOrFail();
+        $permiso = PermisoWeb::where('codigo', 'turnos.listar')->firstOrFail();
+        $menu = Menu::where('ruta', '/turnos')->firstOrFail();
+        $rol->permisosWeb()->detach($permiso->id);
+        $rol->menus()->detach($menu->id);
+        $menu->update(['nombre' => 'Turnos (editado)']);
+
+        $this->seed(SeguridadSeeder::class);
+
+        $this->assertFalse($rol->permisosWeb()->whereKey($permiso->id)->exists());
+        $this->assertFalse($rol->menus()->whereKey($menu->id)->exists());
+        $this->assertSame('Turnos (editado)', $menu->fresh()->nombre);
+        $this->assertTrue($rol->permisosWeb()->where('codigo', 'coberturas.crear')->exists());
     }
 }

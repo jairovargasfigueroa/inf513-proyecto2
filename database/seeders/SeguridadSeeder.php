@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\DB;
 /**
  * Datos iniciales de seguridad del sistema web (documento, Anexos A, B y C):
  * rol Administrador, permisos (recurso.accion), matriz de accesos por rol y
- * menú dinámico. Se puede volver a correr: actualiza sin duplicar.
+ * menú dinámico. Se puede volver a correr sin perder lo que el Administrador
+ * cambió en la Matriz de Accesos o en el Menú Dinámico: la primera vez carga
+ * todo; después solo agrega los permisos y las opciones de menú nuevos.
  */
 class SeguridadSeeder extends Seeder
 {
@@ -64,7 +66,7 @@ class SeguridadSeeder extends Seeder
         'coberturas.reservar' => ['CU-04', 'Reservar o liberar recursos de una cobertura', 'JPR'],
         'coberturas.hoja' => ['CU-04', 'Generar hoja de asignación', 'JPR JAT PER CAM PRE'],
         'coberturas.retorno' => ['CU-04', 'Registrar retorno de cobertura', 'JPR PER'],
-        'notas.listar' => ['CU-05', 'Consultar notas', 'DIR JPR PER EDI PRE'],
+        'notas.listar' => ['CU-05', 'Consultar notas', 'DIR JPR PER CAM EDI PRE'],
         'notas.crear' => ['CU-05', 'Redactar nota', 'JPR PER'],
         'notas.editar' => ['CU-05', 'Modificar nota', 'JPR PER'],
         'notas.baja' => ['CU-05', 'Dar de baja una nota', 'JPR PER'],
@@ -119,6 +121,7 @@ class SeguridadSeeder extends Seeder
         ['Seguridad', 'Matriz de Accesos', '/seguridad/matriz', 'matriz', 'seguridad.matriz.ver'],
         ['Seguridad', 'Menú Dinámico', '/seguridad/menu', 'menu', 'seguridad.menu'],
         ['Seguridad', 'Bitácora de Accesos', '/seguridad/bitacora', 'bitacora', 'bitacora.ver'],
+        ['Seguridad', 'Bitácora de Comandos', '/reportes/bitacora-comandos', 'bitacora', 'bitacora.ver'],
         ['Cuenta', 'Mi Perfil', '/perfil', 'perfil', null],
     ];
 
@@ -131,6 +134,9 @@ class SeguridadSeeder extends Seeder
             );
 
             $roles = Rol::whereIn('nombre', self::ROLES)->pluck('id', 'nombre');
+            // Con la matriz o el menú ya cargados, solo se asigna lo nuevo: no se pisa lo que editó el Administrador.
+            $matrizVacia = ! DB::table('rol_permiso_web')->exists();
+            $menuVacio = ! DB::table('rol_menu')->exists();
             $permisosPorRol = [];
 
             foreach (self::MATRIZ as $codigo => [$casoUso, $descripcion, $siglas]) {
@@ -142,15 +148,17 @@ class SeguridadSeeder extends Seeder
                     'descripcion' => $descripcion,
                 ]);
 
-                foreach (explode(' ', $siglas) as $sigla) {
-                    $permisosPorRol[self::ROLES[$sigla]][$codigo] = $permiso->id;
+                if ($matrizVacia || $permiso->wasRecentlyCreated) {
+                    foreach (explode(' ', $siglas) as $sigla) {
+                        $permisosPorRol[self::ROLES[$sigla]][] = $permiso->id;
+                    }
                 }
             }
 
             $menus = [];
             $alternativos = [];
             foreach (self::MENU as $orden => [$grupo, $nombre, $ruta, $icono, $permiso]) {
-                $menus[] = Menu::updateOrCreate(['ruta' => $ruta], [
+                $menu = Menu::firstOrCreate(['ruta' => $ruta], [
                     'grupo' => $grupo,
                     'nombre' => $nombre,
                     'icono' => $icono,
@@ -158,19 +166,22 @@ class SeguridadSeeder extends Seeder
                     'activo' => true,
                     'permiso_web_id' => is_string($permiso) ? PermisoWeb::where('codigo', $permiso)->value('id') : null,
                 ]);
-                $alternativos[end($menus)->id] = is_array($permiso) ? $permiso : null;
+                if ($menuVacio || $menu->wasRecentlyCreated) {
+                    $menus[] = $menu;
+                    $alternativos[$menu->id] = is_array($permiso) ? $permiso : null;
+                }
             }
 
             foreach ($roles as $nombre => $rolId) {
                 $rol = Rol::find($rolId);
-                $permisos = $permisosPorRol[$nombre] ?? [];
-                $rol->permisosWeb()->sync(array_values($permisos));
+                $rol->permisosWeb()->syncWithoutDetaching($permisosPorRol[$nombre] ?? []);
 
-                // Cada rol recibe las opciones del menú cuyo permiso tiene (y Mi Perfil).
-                $rol->menus()->sync(collect($menus)
+                // Cada rol recibe las opciones del menú cuyo permiso tiene hoy (y Mi Perfil).
+                $permisos = $rol->permisosWeb()->pluck('permiso_web.codigo', 'permiso_web.id')->all();
+                $rol->menus()->syncWithoutDetaching(collect($menus)
                     ->filter(fn (Menu $m) => $alternativos[$m->id]
-                        ? array_intersect($alternativos[$m->id], array_keys($permisos)) !== []
-                        : $m->permiso_web_id === null || in_array($m->permiso_web_id, $permisos, true))
+                        ? array_intersect($alternativos[$m->id], $permisos) !== []
+                        : $m->permiso_web_id === null || isset($permisos[$m->permiso_web_id]))
                     ->pluck('id')
                     ->all());
 

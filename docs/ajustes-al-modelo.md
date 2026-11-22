@@ -12,6 +12,8 @@ al final: cada fila dice qué elemento cambió, qué se cambió y por qué.
 | 16/11/2026 | Todos | Actor `Visitante` (Identificación de Actores y diagrama general de casos de uso) | Se agrega como padre de `Usuario del Canal` y se asocia a «Buscar información». | El documento (Tabla 1) ya lo describía, pero el modelo no lo tenía y «Buscar información» quedaba sin actor. |
 | 16/11/2026 | CU-01 a CU-08 | Diagramas de clases | Todos en notación de rectángulos con atributos y operaciones (CU-02 a CU-08 estaban en íconos) y reordenados para que ninguna asociación cruce una clase; las entidades de otros CU muestran solo el nombre. | Dejarlos legibles para el documento (Figuras 35 a 42). |
 | 16/11/2026 | CU-01 | `FormularioPerfil` «form» | Se agregan `passwordActual` y `passwordConfirmacion` (obligatorias solo al cambiar la contraseña). | Cambiar la contraseña sin pedir la actual permitiría que otra persona la cambie desde una sesión abierta. |
+| 22/11/2026 | CU-05 | Matriz de accesos (Anexo B) | El Camarógrafo recibe `notas.listar`. | Tenía `material.listar` y `material.crear`, pero sin `notas.listar` no llegaba a la pantalla de Material: solo se entra desde el Detalle de Nota. |
+| 22/11/2026 | CU-08 | Opción del menú «Seguridad › Bitácora de Comandos» (Anexo C; W39 y W47) | Nueva opción con `bitacora.ver`. En la pantalla, «← Reportes» solo se muestra con `reportes.ver` o `reportes.mantenimiento`. | El Administrador tiene `bitacora.ver` pero no Reportes, que era la única entrada a esa bitácora. |
 
 ## Reglas de negocio que la implementación agrega al CU-01
 
