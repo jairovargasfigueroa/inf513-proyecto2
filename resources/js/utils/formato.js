@@ -32,3 +32,6 @@ export function duracion(segundos) {
     const signo = (segundos ?? 0) < 0 ? '−' : '';
     return h ? `${signo}${h}:${String(m).padStart(2, '0')}:${r}` : `${signo}${m}:${r}`;
 }
+
+/** 50 y 'USD' → 'USD 50.00' (CU-09). */
+export const dinero = (monto, moneda) => `${moneda} ${Number(monto ?? 0).toFixed(2)}`;

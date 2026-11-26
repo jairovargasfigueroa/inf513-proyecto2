@@ -94,6 +94,9 @@ class SeguridadSeeder extends Seeder
         'reportes.mantenimiento' => ['CU-08', 'Generar reporte de equipos en mantenimiento', 'DIR JPR JAT'],
         'bitacora.ver' => ['CU-08', 'Consultar bitácoras y contador de visitas', 'ADM DIR'],
         'bitacora.fallidos' => ['CU-08', 'Consultar intentos fallidos por IP', 'ADM'],
+        'solicitudes.listar' => ['CU-09', 'Consultar solicitudes de cobertura y sus pagos', 'DIR JPR'],
+        'solicitudes.gestionar' => ['CU-09', 'Aceptar o rechazar solicitudes de cobertura', 'JPR'],
+        'tarifas.gestionar' => ['CU-09', 'Configurar las tarifas de los servicios', 'DIR'],
     ];
 
     /**
@@ -106,8 +109,10 @@ class SeguridadSeeder extends Seeder
         ['Gerencia', 'Analítica Periodística', '/analitica', 'analitica', 'analitica.ver'],
         // Se habilita con cualquiera de los dos: el Jefe de Área Técnica solo tiene el de mantenimiento.
         ['Gerencia', 'Reportes y Estadísticas', '/reportes', 'reportes', ['reportes.ver', 'reportes.mantenimiento']],
+        ['Gerencia', 'Tarifas de Servicios', '/tarifas', 'tarifas', 'tarifas.gestionar'],
         ['Prensa', 'Agenda de Coberturas', '/coberturas', 'agenda', 'coberturas.listar'],
         ['Prensa', 'Gestión de Notas', '/notas', 'notas', 'notas.listar'],
+        ['Prensa', 'Solicitudes de Cobertura', '/solicitudes', 'solicitudes', 'solicitudes.listar'],
         ['Emisión', 'Programas y Grilla', '/programas', 'programas', 'programas.listar'],
         ['Emisión', 'Plantillas de Emisión', '/plantillas', 'plantillas', 'plantillas.listar'],
         ['Emisión', 'Escaletas', '/escaletas', 'escaletas', 'escaletas.listar'],

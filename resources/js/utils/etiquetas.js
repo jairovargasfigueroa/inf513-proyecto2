@@ -79,3 +79,13 @@ export const ESTADOS_ESCALETA = { borrador: 'Borrador', cerrada: 'Cerrada', emit
 export const TIPOS_ITEM = {
     apertura: 'Apertura', titulares: 'Titulares', nota: 'Nota', enlace_vivo: 'Enlace en vivo', entrevista: 'Entrevista', despedida: 'Despedida', otro: 'Otro', corte: 'Corte comercial',
 };
+
+// CU-09 Solicitudes de cobertura y pagos.
+export const ESTADOS_SOLICITUD = {
+    pendiente_pago: 'Pendiente de pago',
+    pagada: 'Pagada · por atender',
+    aceptada: 'Aceptada',
+    rechazada: 'Rechazada · pago devuelto',
+};
+
+export const TONO_SOLICITUD = { pendiente_pago: 'neutro', pagada: 'acento', aceptada: 'exito', rechazada: 'peligro' };
