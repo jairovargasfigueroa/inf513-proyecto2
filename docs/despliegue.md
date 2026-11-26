@@ -1,112 +1,98 @@
 # Despliegue en el servidor tecnoweb
 
 El sistema se publica en <https://www.tecnoweb.org.bo/inf513/grupo14sa/proyecto2> con la base
-`db_grupo14sa` en `db.tecnoweb.org.bo`, la misma que usa el sistema vía correo (Proyecto 1).
+`db_grupo14sa`, la misma que usa el sistema vía correo (Proyecto 1). Se despliega **por FTP**, sin
+SSH: la app se arma en la PC (o en GitHub Actions) y se sube ya lista.
 
-## 1. Lo que hace falta
+Datos del servidor (noviembre de 2026):
 
-| Qué | Para qué |
+| Qué | Valor |
 |---|---|
-| Usuario y contraseña de SSH del grupo | Subir el proyecto |
-| Usuario y contraseña de la base `db_grupo14sa` | El `.env` del servidor |
-| PHP 8.2 o superior con `pdo_pgsql`, `mbstring`, `openssl`, `fileinfo` | Laravel 12 |
-| Composer en el servidor (o subir la carpeta `vendor`) | Dependencias de PHP |
+| FTP | `139.99.68.169`, puerto 21, usuario `grupo14sa` (el DNS de tecnoweb falla a ratos: usar la IP) |
+| Base | PostgreSQL `db_grupo14sa`, usuario `grupo14sa`. **Solo acepta conexiones desde el propio servidor** (desde fuera: `Connection refused`), por eso el `.env` usa `DB_HOST=localhost` |
+| PHP | 8.2 o superior con `pdo_pgsql` |
 
-Comprobar en el servidor: `php -v`, `php -m | grep -i pgsql` y `composer --version`.
+> El firewall del servidor (sshguard) bloquea la IP tras varios intentos fallidos de contraseña o
+> consultas seguidas. Probar la contraseña **una vez** y esperar antes de repetir.
 
-## 2. Compilar el frontend en la PC
+## Estructura en el servidor
 
-React se compila en la PC y se sube ya compilado (el servidor no necesita Node). La ruta de la
-subcarpeta se fija al compilar:
+```
+<carpeta FTP del grupo>/            → https://www.tecnoweb.org.bo/inf513/grupo14sa/
+├── proyecto2/                      lo público: index.php, .htaccess, build/  → …/proyecto2
+└── proyecto2-app/                  la aplicación (vendor, .env, storage); .htaccess «Require all denied»
+```
+
+## Primera vez (a mano)
+
+### 1. Armar la app en la PC
 
 ```bash
-MSYS_NO_PATHCONV=1 ASSET_URL=/inf513/grupo14sa/proyecto2 npm run build
+scripts/preparar-ftp.sh develop        # o main, o la rama que se va a presentar (solo lo commiteado)
 ```
 
-`MSYS_NO_PATHCONV=1` solo hace falta en Git Bash de Windows (evita que convierta la ruta). En
-PowerShell: `$env:ASSET_URL="/inf513/grupo14sa/proyecto2"; npm run build`.
+Deja en `dist-ftp/` las dos carpetas, con `vendor` sin dependencias de desarrollo, React compilado
+para la subcarpeta, `index.php` apuntando a `../proyecto2-app/` y un `.env` de producción con
+`APP_KEY` e `INSTALAR_TOKEN` generados. Necesita PHP, Composer y Node en la PC.
 
-## 3. Subir el proyecto
+### 2. Completar el `.env`
 
-La aplicación queda **fuera** de la carpeta pública y solo `public/` se publica, así el `.env`
-nunca es accesible desde el navegador:
+En `dist-ftp/proyecto2-app/.env` escribir `DB_PASSWORD=`. Guardar una copia de este `.env` fuera
+del repo: el script lo regenera cada vez.
 
-```bash
-# en la PC (sin vendor ni node_modules; public/build sí va)
-tar --exclude=vendor --exclude=node_modules --exclude=.git --exclude=.env -czf proyecto2.tar.gz .
-scp proyecto2.tar.gz grupo14sa@www.tecnoweb.org.bo:~
-```
+### 3. Subir con FileZilla
 
-```bash
-# en el servidor
-mkdir -p ~/proyecto2-app && tar -xzf ~/proyecto2.tar.gz -C ~/proyecto2-app
-cd ~/proyecto2-app && composer install --no-dev --optimize-autoloader
-ln -s ~/proyecto2-app/public ~/public_html/proyecto2   # la carpeta pública del grupo
-chmod -R u+rwX storage bootstrap/cache
-```
+1. Arrastrar `dist-ftp/proyecto2-app` y `dist-ftp/proyecto2` a la carpeta del grupo, una al lado
+   de la otra.
+2. Permisos `777` (recursivo) a `proyecto2-app/storage` y `proyecto2-app/bootstrap/cache`.
 
-Si el servidor no permite enlaces simbólicos, copiar el contenido de `public/` a
-`~/public_html/proyecto2` y en ese `index.php` cambiar las dos rutas `__DIR__.'/../…'` por
-`'/home/grupo14sa/proyecto2-app/…'`.
+### 4. Crear las tablas y los datos iniciales
 
-Si Apache responde 404 en las rutas internas, agregar en `public/.htaccess`, debajo de
-`RewriteEngine On`:
+Como la base solo acepta conexiones locales, `migrate` y `db:seed` corren dentro del servidor con
+el instalador de un solo uso:
 
-```apache
-RewriteBase /inf513/grupo14sa/proyecto2/
-```
+1. Abrir <https://www.tecnoweb.org.bo/inf513/grupo14sa/proyecto2/instalar.php>.
+2. Pegar `INSTALAR_TOKEN` (del `.env`), el correo y la contraseña del Administrador, y enviar.
+3. Debe mostrar `migrate (código 0)`, `db:seed (código 0)` y «Administrador listo».
+4. **Borrar `proyecto2/instalar.php` del servidor.**
 
-## 4. Configurar el `.env` del servidor
+Las 26 tablas del Proyecto 1 ya están en `db_grupo14sa` (las cargó el sistema vía correo) y no se
+tocan. `migrate` agrega las 8 tablas web; `db:seed` carga el rol Administrador, los permisos, la
+matriz de accesos y el menú. Con `APP_ENV=production` no crea cuentas de prueba, y repetirlo no
+duplica nada.
 
-```bash
-cp .env.example .env && chmod 600 .env && nano .env
-php artisan key:generate
-```
+`migrate:fresh`, `migrate:refresh`, `migrate:reset` y `db:wipe` están bloqueados: borrarían también
+las tablas del sistema vía correo. `scripts/reiniciar_demo.sh` **borra toda la base**: es solo
+para la base local.
 
-```dotenv
-APP_ENV=production
-APP_DEBUG=false
-APP_URL=https://www.tecnoweb.org.bo/inf513/grupo14sa/proyecto2
-ASSET_URL=/inf513/grupo14sa/proyecto2
-VITE_BASE_PATH=/inf513/grupo14sa/proyecto2
+### 5. Comprobar
 
-DB_HOST=db.tecnoweb.org.bo   # o localhost, si es el mismo servidor que usa el sistema vía correo
-DB_PORT=5432
-DB_DATABASE=db_grupo14sa
-DB_USERNAME=grupo14sa
-DB_PASSWORD=…                # la que dio el docente
-```
+1. <https://www.tecnoweb.org.bo/inf513/grupo14sa/proyecto2/api/v1/estado> → `{"estado":"ok"}`.
+2. <https://www.tecnoweb.org.bo/inf513/grupo14sa/proyecto2> → la app; iniciar sesión con el Administrador.
+3. <https://www.tecnoweb.org.bo/inf513/grupo14sa/proyecto2-app/.env> → **403**. Si muestra el
+   archivo, borrarlo del servidor y cambiar la contraseña de la base.
 
-## 5. Base de datos
+Si algo responde 500, bajar `proyecto2-app/storage/logs/laravel.log` por FTP.
 
-Las 26 tablas del Proyecto 1 ya están en `db_grupo14sa` (las cargó el sistema vía correo): **no
-se vuelven a cargar**. Solo se agregan las 8 tablas del sistema web y sus datos iniciales:
+## Después: CI/CD con GitHub Actions
 
-```bash
-php artisan migrate --force
-php artisan db:seed --force          # rol Administrador, 65 permisos, matriz y menú
-php artisan canal11:administrador correo.del.admin@gmail.com   # pide la contraseña
-php artisan config:cache && php artisan route:cache && php artisan view:cache
-```
+`.github/workflows/ci-cd.yml` tiene dos trabajos:
 
-En producción **no** se crean cuentas de prueba. Si la base del servidor tiene los usuarios de
-`datos_prueba.sql`, todos comparten la contraseña de prueba: cámbiela a cada uno (Gestión de
-Usuarios) antes de la defensa, o al menos a los que se vayan a usar.
+- **pruebas** (cada push y pull request): levanta PostgreSQL, carga `database/sql/` (la base del
+  correo), corre las migraciones y el seeder y luego `php artisan test`.
+- **desplegar** (solo con push a `main`, si las pruebas pasan): corre `scripts/preparar-ftp.sh`,
+  quita el `.env` y el instalador, y sube por FTP solo los archivos que cambiaron. Nunca pisa el
+  `.env` del servidor.
 
-`migrate:fresh`, `migrate:refresh`, `migrate:reset` y `db:wipe` están bloqueados: borrarían
-también las tablas del sistema vía correo.
+Secretos del repo (*Settings → Secrets and variables → Actions*):
 
-## 6. Comprobar
+| Secreto | Valor |
+|---|---|
+| `FTP_SERVER` | `139.99.68.169` |
+| `FTP_USERNAME` | `grupo14sa` |
+| `FTP_PASSWORD` | la contraseña del FTP |
+| `FTP_DIR` | la carpeta del grupo en el FTP, terminada en `/` (la que contiene `proyecto2/`) |
 
-1. Abrir <https://www.tecnoweb.org.bo/inf513/grupo14sa/proyecto2>: debe verse la grilla del día.
-2. `https://…/proyecto2/api/v1/estado` debe responder `{"estado":"ok"}`.
-3. Iniciar sesión con el Administrador y revisar el menú, la bitácora y el contador del pie.
-
-## 7. Actualizar después
-
-```bash
-# PC: compilar (paso 2) y subir el nuevo comprimido
-cd ~/proyecto2-app && tar -xzf ~/proyecto2.tar.gz
-composer install --no-dev --optimize-autoloader
-php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache
-```
+Flujo: rama → pull request a `develop` → pull request de `develop` a `main` → se despliega solo.
+Si la versión trae **migraciones nuevas**, subir otra vez `instalar.php` (sale en `dist-ftp/` al
+correr el script), abrirlo y borrarlo.

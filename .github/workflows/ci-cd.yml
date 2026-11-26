@@ -1,0 +1,78 @@
+# CI: en cada push y pull request corre las pruebas contra un PostgreSQL con la base del correo.
+# CD: en cada push a main arma la app y la sube por FTP a tecnoweb (las migraciones nuevas, con instalar.php).
+name: CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  BASE_PATH: /inf513/grupo14sa/proyecto2
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: grupo14sa
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: db_grupo14sa
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 10
+    env:
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: db_grupo14sa
+      DB_USERNAME: grupo14sa
+      DB_PASSWORD: ci
+      PGPASSWORD: ci
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: pdo_pgsql, mbstring
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: composer install --no-interaction --prefer-dist
+      - run: npm ci && npm run build
+      - name: Base del sistema vía correo (26 tablas y datos de prueba)
+        run: |
+          psql -h 127.0.0.1 -U grupo14sa -d db_grupo14sa -v ON_ERROR_STOP=1 -f database/sql/script_db_grupo14sa.sql
+          psql -h 127.0.0.1 -U grupo14sa -d db_grupo14sa -v ON_ERROR_STOP=1 -f database/sql/datos_prueba.sql
+      - run: cp .env.example .env && php artisan key:generate
+      - run: php artisan migrate --force && php artisan db:seed --force
+      - run: php artisan test
+
+  desplegar:
+    needs: pruebas
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency: produccion
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # Arma dist-ftp/proyecto2-app y dist-ftp/proyecto2 (con vendor y build) igual que en la PC.
+      - run: scripts/preparar-ftp.sh HEAD
+      # El .env y el instalador del servidor se suben a mano una sola vez: CI nunca los pisa.
+      - run: rm dist-ftp/proyecto2-app/.env dist-ftp/proyecto2/instalar.php
+      # Solo sube lo que cambió (guarda el estado en .ftp-deploy-sync-state.json del servidor).
+      - uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.FTP_DIR }}
+          local-dir: dist-ftp/

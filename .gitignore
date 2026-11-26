@@ -24,3 +24,6 @@ yarn-error.log
 
 # Comprimido de entrega (scripts/empaquetar.sh)
 *.tar.gz
+
+# Carpetas armadas para subir por FTP (scripts/preparar-ftp.sh)
+/dist-ftp
