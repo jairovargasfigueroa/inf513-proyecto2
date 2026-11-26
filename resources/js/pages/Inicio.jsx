@@ -1,4 +1,4 @@
-import { LogIn, Tv } from 'lucide-react';
+import { LogIn, Megaphone, Tv } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Cargando from '../components/ui/Cargando';
@@ -9,7 +9,8 @@ const hora = (h) => h.slice(0, 5);
 
 /**
  * Inicio (pública) «client page»: grilla del día (verGrillaDelDia), buscador
- * global en el encabezado e ingreso al sistema (irALogin).
+ * global en el encabezado, ingreso al sistema (irALogin) y, desde el CU-09,
+ * solicitar o consultar una cobertura pagada (irASolicitar, irAConsultar).
  */
 export default function Inicio() {
     const { autenticado } = useAuth();
@@ -41,6 +42,23 @@ export default function Inicio() {
                         Iniciar sesión
                     </Link>
                 )}
+            </section>
+
+            <section className="tarjeta flex flex-wrap items-center justify-between gap-4" aria-labelledby="titulo-solicitar">
+                <div>
+                    <h2 id="titulo-solicitar" className="flex items-center gap-2 text-xl font-semibold">
+                        <Megaphone className="h-5 w-5" aria-hidden="true" />
+                        ¿Quiere que el canal cubra su evento?
+                    </h2>
+                    <p className="mt-1 max-w-2xl text-suave">
+                        Solicite la cobertura o la transmisión en vivo de su evento y pague en línea. Le confirmaremos si el
+                        equipo puede atenderlo.
+                    </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                    <Link to="/solicitar" className="boton">Solicitar cobertura</Link>
+                    <Link to="/solicitar/consulta" className="boton-secundario">Consultar mi solicitud</Link>
+                </div>
             </section>
 
             <section className="tarjeta" aria-labelledby="titulo-grilla">

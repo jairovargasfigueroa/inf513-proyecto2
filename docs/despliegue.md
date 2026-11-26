@@ -75,6 +75,9 @@ DB_PORT=5432
 DB_DATABASE=db_grupo14sa
 DB_USERNAME=grupo14sa
 DB_PASSWORD=…                # la que dio el docente
+
+STRIPE_SECRET=sk_test_…      # CU-09: clave secreta de PRUEBA de Stripe (nunca una sk_live_)
+STRIPE_WEBHOOK_SECRET=       # opcional: whsec_… del webhook /api/v1/pagos/stripe/webhook
 ```
 
 ## 5. Base de datos
