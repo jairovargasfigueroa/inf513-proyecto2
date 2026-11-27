@@ -108,3 +108,25 @@ Vienen del sistema vía correo (Proyecto 1) o protegen el acceso al sistema web:
 - Las pantallas se cargan bajo demanda (React.lazy): el JavaScript inicial bajó de 896 kB a 271 kB (RNF-31).
 - `php artisan canal11:administrador <correo>` crea la cuenta del Administrador en producción, donde
   no se cargan las cuentas de prueba.
+
+## CU-09 Gestión de Solicitudes de Cobertura y Pagos (agregado el 26/11/2026)
+
+Caso de uso nuevo, pedido por el docente para incluir pagos con Stripe (modo de prueba). No cambia la
+lógica de los CU-01 a CU-08: reutiliza la creación de coberturas del CU-04 y suma datos a la matriz de
+accesos y al menú del CU-01. Modelado en Enterprise Architect en los mismos paquetes que los demás CU.
+
+- Actores: Visitante (solicita, paga y consulta sin iniciar sesión), Jefe de Prensa (acepta o rechaza)
+  y Director (configura las tarifas y ve los ingresos).
+- Estados de la solicitud: `pendiente_pago` → `pagada` → `aceptada` | `rechazada` (con el pago devuelto).
+- La solicitud se pide con al menos 2 días de anticipación y el evento dura como máximo 12 horas.
+- El monto sale de la tarifa activa elegida (no del formulario) y queda guardado en la solicitud y en el
+  pago: cambiar el precio después no altera los pagos hechos.
+- El código de seguimiento (`SOL-0001`) y el correo son la «llave» del Visitante para consultar.
+- Aceptar crea la cobertura `planificada` con los datos del evento (la fuente lleva el código de la
+  solicitud) y lleva al Detalle de Cobertura para asignar personal y recursos con las reglas de siempre.
+- Rechazar exige un motivo y devuelve el pago completo por Stripe.
+- El pago se confirma al volver de Stripe (`POST /solicitudes/confirmar`, que consulta la sesión) y
+  también por el webhook firmado; los dos caminos son idempotentes.
+- Permisos nuevos: `solicitudes.listar` (Director, Jefe de Prensa), `solicitudes.gestionar` (Jefe de
+  Prensa) y `tarifas.gestionar` (Director). `permiso_web.caso_uso` admite ahora `CU-09`.
+- Opciones nuevas del menú: «Solicitudes de Cobertura» (Prensa) y «Tarifas de Servicios» (Gerencia).

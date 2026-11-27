@@ -38,6 +38,12 @@ const BitacoraAccesos = lazy(() => import('./pages/cu08/BitacoraAccesos'));
 const BitacoraComandos = lazy(() => import('./pages/cu08/BitacoraComandos'));
 const ReportesEstadisticas = lazy(() => import('./pages/cu08/ReportesEstadisticas'));
 const VistaReporte = lazy(() => import('./pages/cu08/VistaReporte'));
+const ConsultarSolicitud = lazy(() => import('./pages/cu09/ConsultarSolicitud'));
+const DetalleSolicitud = lazy(() => import('./pages/cu09/DetalleSolicitud'));
+const PagoRecibido = lazy(() => import('./pages/cu09/PagoRecibido'));
+const SolicitarCobertura = lazy(() => import('./pages/cu09/SolicitarCobertura'));
+const SolicitudesCobertura = lazy(() => import('./pages/cu09/SolicitudesCobertura'));
+const TarifasServicios = lazy(() => import('./pages/cu09/TarifasServicios'));
 
 /*
  * Pantallas del menú (documento, Anexo C): ruta, permiso que la habilita y CU.
@@ -62,6 +68,8 @@ const PANTALLAS = [
     { ruta: '/seguridad/matriz', titulo: 'Matriz de Accesos', permiso: 'seguridad.matriz.ver', cu: 'CU-01', pantalla: MatrizAccesos },
     { ruta: '/seguridad/menu', titulo: 'Menú Dinámico', permiso: 'seguridad.menu', cu: 'CU-01', pantalla: AdministrarMenu },
     { ruta: '/seguridad/bitacora', titulo: 'Bitácora de Accesos', permiso: 'bitacora.ver', cu: 'CU-08', pantalla: BitacoraAccesos },
+    { ruta: '/solicitudes', titulo: 'Solicitudes de Cobertura', permiso: 'solicitudes.listar', cu: 'CU-09', pantalla: SolicitudesCobertura },
+    { ruta: '/tarifas', titulo: 'Tarifas de Servicios', permiso: 'tarifas.gestionar', cu: 'CU-09', pantalla: TarifasServicios },
 ];
 
 /* Pantallas a las que se llega desde otra pantalla (no desde el menú). */
@@ -77,6 +85,7 @@ const SUBPANTALLAS = [
     { ruta: '/escaletas/:id/presentador', permiso: 'escaletas.lectura', pantalla: VistaPresentador },
     { ruta: '/reportes/ver', permiso: ['reportes.ver', 'reportes.mantenimiento'], pantalla: VistaReporte },
     { ruta: '/reportes/bitacora-comandos', permiso: 'bitacora.ver', pantalla: BitacoraComandos },
+    { ruta: '/solicitudes/:id', permiso: 'solicitudes.listar', pantalla: DetalleSolicitud },
 ];
 
 export default function App() {
@@ -87,6 +96,9 @@ export default function App() {
                 <Route index element={<Inicio />} />
                 <Route path="login" element={<Login />} />
                 <Route path="buscar" element={<ResultadosBusqueda />} />
+                <Route path="solicitar" element={<SolicitarCobertura />} />
+                <Route path="solicitar/pago-recibido" element={<PagoRecibido />} />
+                <Route path="solicitar/consulta" element={<ConsultarSolicitud />} />
 
                 {/* Con sesión */}
                 <Route path="inicio" element={<RutaPrivada><Bienvenida /></RutaPrivada>} />

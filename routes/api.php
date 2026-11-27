@@ -27,6 +27,9 @@ use App\Http\Controllers\Api\V1\ReporteController;
 use App\Http\Controllers\Api\V1\ReservaRecursoController;
 use App\Http\Controllers\Api\V1\RolController;
 use App\Http\Controllers\Api\V1\RotuloController;
+use App\Http\Controllers\Api\V1\SolicitudController;
+use App\Http\Controllers\Api\V1\StripeWebhookController;
+use App\Http\Controllers\Api\V1\TarifaController;
 use App\Http\Controllers\Api\V1\TipoRecursoController;
 use App\Http\Controllers\Api\V1\TurnoController;
 use App\Http\Controllers\Api\V1\UsuarioController;
@@ -46,6 +49,14 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 Route::get('/busqueda', [BusquedaController::class, 'buscar'])->middleware('throttle:60,1');
 Route::post('/visitas', [VisitaController::class, 'registrar'])->middleware('throttle:120,1');
 Route::get('/grilla', [GrillaController::class, 'index']);
+
+// CU-09: el Visitante solicita una cobertura, la paga con Stripe y la consulta con su código.
+Route::get('/servicios', [TarifaController::class, 'servicios']);
+Route::post('/solicitudes', [SolicitudController::class, 'store'])->middleware('throttle:10,1');
+Route::post('/solicitudes/pago', [SolicitudController::class, 'reintentarPago'])->middleware('throttle:10,1');
+Route::post('/solicitudes/confirmar', [SolicitudController::class, 'confirmar'])->middleware('throttle:30,1');
+Route::get('/solicitudes/consulta', [SolicitudController::class, 'consulta'])->middleware('throttle:30,1');
+Route::post('/pagos/stripe/webhook', StripeWebhookController::class);
 
 // ── Rutas con sesión ───────────────────────────────────────────────────────
 Route::middleware(['auth:sanctum', 'activo'])->group(function () {
@@ -160,4 +171,13 @@ Route::middleware(['auth:sanctum', 'activo'])->group(function () {
     Route::get('/bitacora/intentos-fallidos', [BitacoraController::class, 'intentosFallidos'])->middleware('permiso:bitacora.fallidos');
     Route::get('/bitacora/recursos-top', [BitacoraController::class, 'recursosTop'])->middleware('permiso:bitacora.ver');
     Route::get('/visitas', [VisitaController::class, 'index'])->middleware('permiso:bitacora.ver');
+
+    // CU-09 Gestión de Solicitudes de Cobertura y Pagos ─────────────────────
+    Route::get('/solicitudes', [SolicitudController::class, 'index'])->middleware('permiso:solicitudes.listar');
+    Route::get('/solicitudes/{solicitud}', [SolicitudController::class, 'show'])->whereNumber('solicitud')->middleware('permiso:solicitudes.listar');
+    Route::post('/solicitudes/{solicitud}/aceptar', [SolicitudController::class, 'aceptar'])->whereNumber('solicitud')->middleware('permiso:solicitudes.gestionar');
+    Route::post('/solicitudes/{solicitud}/rechazar', [SolicitudController::class, 'rechazar'])->whereNumber('solicitud')->middleware('permiso:solicitudes.gestionar');
+    Route::get('/tarifas', [TarifaController::class, 'index'])->middleware('permiso:tarifas.gestionar');
+    Route::post('/tarifas', [TarifaController::class, 'store'])->middleware('permiso:tarifas.gestionar');
+    Route::put('/tarifas/{tarifa}', [TarifaController::class, 'update'])->whereNumber('tarifa')->middleware('permiso:tarifas.gestionar');
 });

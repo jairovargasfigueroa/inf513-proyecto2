@@ -32,6 +32,7 @@ es una pantalla de React, cada «form» un formulario y cada «server page» un 
 | CU-06 Plantillas y Escaleta del Noticiero | Programas y Grilla, Plantillas, Escaletas, Editor de Escaleta (arrastrar y soltar), Vista del Presentador |
 | CU-07 Analítica Periodística | Panel Analítico (gráficos), Analítica Periodística |
 | CU-08 Reportes y Estadísticas | Reportes (CSV e impresión), Bitácora de Comandos, Bitácora de Accesos |
+| CU-09 Solicitudes de Cobertura y Pagos | Solicitar Cobertura, Pago Recibido y Consultar Solicitud (públicas); Solicitudes de Cobertura, Detalle de Solicitud y Tarifas de Servicios |
 
 ## Requisitos de la consigna
 
@@ -54,6 +55,8 @@ es una pantalla de React, cada «form» un formulario y cada «server page» un 
 - Las **8 tablas nuevas** del sistema web son migraciones de Laravel: `preferencia_usuario`,
   `permiso_web`, `rol_permiso_web`, `menu`, `rol_menu`, `bitacora_acceso`, `contador_visita` y
   `personal_access_tokens`, más la función `fn_registrar_visita` y el trigger `tg_usuario_preferencia`.
+- El **CU-09** agrega `tarifa`, `solicitud_cobertura` y `pago` (migraciones del 26/11/2026); la
+  solicitud aceptada solo guarda la cobertura que generó, sin cambiar la tabla `cobertura`.
 - `migrate:fresh`, `migrate:refresh`, `migrate:reset` y `db:wipe` están **bloqueados**, porque
   borrarían también las tablas del sistema vía correo.
 - La conexión usa la zona horaria `America/La_Paz` (`DB_TIMEZONE`).
@@ -87,13 +90,26 @@ Cuentas de prueba (solo en desarrollo; todas con la contraseña de prueba de `da
 `area.tecnica@canal11.test`, `carla.rojas@canal11.test` (Periodista), `jorge.mendoza@canal11.test`
 (Camarógrafo), `patricia.saucedo@canal11.test` (Editora) y `mariana.terceros@canal11.test` (Presentadora).
 
+### Pagos con Stripe (CU-09, modo de prueba)
+
+1. Crear una cuenta en [stripe.com](https://dashboard.stripe.com/register) y dejarla en **modo de prueba**.
+2. Copiar la clave secreta de prueba (`sk_test_…`) de *Developers → API keys* en `STRIPE_SECRET` del `.env`
+   y ejecutar `php artisan config:clear`.
+3. Pagar con la tarjeta de prueba `4242 4242 4242 4242`, cualquier fecha futura y cualquier CVC. No se
+   mueve dinero real.
+
+Sin `STRIPE_SECRET`, el formulario público responde que los pagos no están disponibles; la solicitud de
+prueba `SOL-0001` (ya pagada) sirve para mostrar la atención del Jefe de Prensa igual. El webhook
+(`POST /api/v1/pagos/stripe/webhook`, con `STRIPE_WEBHOOK_SECRET`) es opcional: el pago también se
+confirma al volver de Stripe.
+
 ## Pruebas
 
 ```bash
 php artisan test
 ```
 
-89 pruebas de características (PHPUnit) sobre la base local: éxito, 401, 403, 409, 422 y 429 de cada
+101 pruebas de características (PHPUnit) sobre la base local: éxito, 401, 403, 409, 422 y 429 de cada
 caso de uso y su registro en la bitácora. Cada prueba corre en una transacción que se deshace.
 
 ## Despliegue

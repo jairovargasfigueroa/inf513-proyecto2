@@ -40,6 +40,14 @@ para la subcarpeta, `index.php` apuntando a `../proyecto2-app/` y un `.env` de p
 En `dist-ftp/proyecto2-app/.env` escribir `DB_PASSWORD=`. Guardar una copia de este `.env` fuera
 del repo: el script lo regenera cada vez.
 
+El CU-09 (pagos) necesita la clave de **prueba** de Stripe. El script copia `STRIPE_SECRET` del
+`.env` local si existe; si no, escribirla a mano:
+
+```dotenv
+STRIPE_SECRET=sk_test_…      # CU-09: clave secreta de PRUEBA de Stripe (nunca una sk_live_)
+STRIPE_WEBHOOK_SECRET=       # opcional: whsec_… del webhook /api/v1/pagos/stripe/webhook
+```
+
 ### 3. Subir con FileZilla
 
 1. Arrastrar `dist-ftp/proyecto2-app` y `dist-ftp/proyecto2` a la carpeta del grupo, una al lado
