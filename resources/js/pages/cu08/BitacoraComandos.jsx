@@ -6,6 +6,7 @@ import EncabezadoPagina from '../../components/ui/EncabezadoPagina';
 import Insignia from '../../components/ui/Insignia';
 import Paginacion from '../../components/ui/Paginacion';
 import TablaDatos from '../../components/ui/TablaDatos';
+import { useAuth } from '../../context/AuthContext';
 import useListado from '../../hooks/useListado';
 import { fechaHora } from '../../utils/formato';
 
@@ -14,6 +15,7 @@ import { fechaHora } from '../../utils/formato';
  * GET /bitacora-comandos: los correos que procesó el sistema vía correo.
  */
 export default function BitacoraComandos() {
+    const { puede } = useAuth();
     const { filas, meta, filtros, cargando, error, filtrar, setPagina } = useListado('/bitacora-comandos', {
         desde: haceDias(29), hasta: haceDias(0), remitente: '', comando: '', resultado: '',
     });
@@ -21,7 +23,10 @@ export default function BitacoraComandos() {
     return (
         <section>
             <EncabezadoPagina titulo="Bitácora de Comandos" descripcion="Correos recibidos por el sistema vía correo (Proyecto 1) y su resultado." casoUso="CU-08">
-                <Link to="/reportes" className="boton-secundario"><ArrowLeft className="h-4 w-4" aria-hidden="true" /> Reportes</Link>
+                {/* El Administrador llega desde el menú y no tiene permiso de Reportes. */}
+                {(puede('reportes.ver') || puede('reportes.mantenimiento')) && (
+                    <Link to="/reportes" className="boton-secundario"><ArrowLeft className="h-4 w-4" aria-hidden="true" /> Reportes</Link>
+                )}
             </EncabezadoPagina>
             <div className="tarjeta">
                 <form className="mb-4 grid gap-3 sm:grid-cols-3 lg:grid-cols-5" role="search" onSubmit={(e) => e.preventDefault()}>

@@ -283,12 +283,12 @@ INSERT INTO ausencia (personal_id, tipo, fecha_hora_inicio, fecha_hora_fin, moti
 
 -- ---------- CU-03 ----------
 INSERT INTO tipo_recurso (nombre, es_unidad_movil, descripcion) VALUES
- ('Camara',          FALSE, 'Cámaras de video ENG'),        -- 1
- ('Microfono',       FALSE, 'Micrófonos inalámbricos y de cañón'), -- 2
- ('Tripode',         FALSE, 'Trípodes y soportes'),         -- 3
+ ('Cámara',          FALSE, 'Cámaras de video ENG'),        -- 1
+ ('Micrófono',       FALSE, 'Micrófonos inalámbricos y de cañón'), -- 2
+ ('Trípode',         FALSE, 'Trípodes y soportes'),         -- 3
  ('Luces',           FALSE, 'Iluminación portátil'),        -- 4
- ('Unidad movil',    TRUE,  'Vehículos para coberturas'),   -- 5
- ('Isla de edicion', FALSE, 'Estaciones de edición de video'); -- 6
+ ('Unidad móvil',    TRUE,  'Vehículos para coberturas'),   -- 5
+ ('Isla de edición', FALSE, 'Estaciones de edición de video'); -- 6
 
 INSERT INTO recurso (codigo, tipo_recurso_id, marca, modelo, placa, caracteristicas, estado, observacion) VALUES
  ('CAM-01', 1, 'Sony',       'PXW-Z190',   NULL, '4K, 3 sensores 1/3"', 'operativo', NULL),                 -- 1

@@ -24,3 +24,9 @@ yarn-error.log
 
 # Comprimido de entrega (scripts/empaquetar.sh)
 *.tar.gz
+
+# Carpetas armadas para subir por FTP (scripts/preparar-ftp.sh)
+/dist-ftp
+
+# Volcado de la base local para cargar en el servidor (tiene datos y contraseñas)
+/database/datos.sql
