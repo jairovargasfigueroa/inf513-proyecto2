@@ -1,5 +1,5 @@
 # CI: en cada push y pull request corre las pruebas contra un PostgreSQL con la base del correo.
-# CD: en cada push a main arma la app y la sube por FTP a tecnoweb (las migraciones nuevas, con instalar.php).
+# CD: en cada push a main arma la app, la sube por FTP a tecnoweb y corre instalar.php (migrate y seed).
 name: CI/CD
 
 on:
@@ -66,8 +66,8 @@ jobs:
           node-version: 20
       # Arma dist-ftp/proyecto2-app y dist-ftp/proyecto2 (con vendor y build) igual que en la PC.
       - run: scripts/preparar-ftp.sh HEAD
-      # El .env y el instalador del servidor se suben a mano una sola vez: CI nunca los pisa.
-      - run: rm dist-ftp/proyecto2-app/.env dist-ftp/proyecto2/instalar.php
+      # El .env del servidor se sube a mano una sola vez: CI nunca lo pisa.
+      - run: rm dist-ftp/proyecto2-app/.env
       # Solo sube lo que cambió (guarda el estado en .ftp-deploy-sync-state.json del servidor).
       - uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -76,3 +76,13 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ${{ secrets.FTP_DIR }}
           local-dir: dist-ftp/
+      # Migraciones nuevas y seeder: los corre instalar.php dentro del servidor (la base no acepta conexiones de fuera).
+      # INSTALAR_TOKEN es el mismo valor que está en el .env del servidor.
+      - name: Migrar en el servidor
+        env:
+          TOKEN: ${{ secrets.INSTALAR_TOKEN }}
+          IP: ${{ secrets.FTP_SERVER }}
+        run: |
+          curl -fsS -m 120 --resolve www.tecnoweb.org.bo:443:$IP --data-urlencode "token=$TOKEN" \
+            https://www.tecnoweb.org.bo/inf513/grupo14sa/proyecto2/instalar.php | tee salida.txt
+          grep -q "db:seed (código 0)" salida.txt

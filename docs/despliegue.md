@@ -57,12 +57,26 @@ STRIPE_WEBHOOK_SECRET=       # opcional: whsec_… del webhook /api/v1/pagos/str
 ### 4. Crear las tablas y los datos iniciales
 
 Como la base solo acepta conexiones locales, `migrate` y `db:seed` corren dentro del servidor con
-el instalador de un solo uso:
+`proyecto2/instalar.php` (protegido por `INSTALAR_TOKEN`; se deja en el servidor porque CI/CD lo
+llama en cada despliegue):
 
 1. Abrir <https://www.tecnoweb.org.bo/inf513/grupo14sa/proyecto2/instalar.php>.
 2. Pegar `INSTALAR_TOKEN` (del `.env`), el correo y la contraseña del Administrador, y enviar.
 3. Debe mostrar `migrate (código 0)`, `db:seed (código 0)` y «Administrador listo».
-4. **Borrar `proyecto2/instalar.php` del servidor.**
+
+**Con los datos de prueba de la PC.** Para que el servidor quede con la misma base que la PC (los
+datos entregados al docente), volcarla y subir el archivo a `proyecto2-app/database/datos.sql`
+(esa carpeta no es pública; el archivo no se versiona):
+
+```bash
+pg_dump -h 127.0.0.1 -U grupo14sa -d db_grupo14sa --clean --if-exists --no-owner --no-privileges \
+  --no-comments --inserts --exclude-table-data=personal_access_tokens | grep -vE '^\\(un)?restrict ' > datos.sql
+```
+
+En el instalador marcar «REEMPLAZAR toda la base». **Borra los datos que haya en el servidor,
+también los del sistema por correo**, y carga los de la PC en una sola transacción (si algo falla,
+la base queda como estaba). Las cuentas quedan con las contraseñas de la PC: cambiarlas antes de
+la defensa.
 
 Las 26 tablas del Proyecto 1 ya están en `db_grupo14sa` (las cargó el sistema vía correo) y no se
 tocan. `migrate` agrega las 8 tablas web; `db:seed` carga el rol Administrador, los permisos, la
@@ -89,8 +103,8 @@ Si algo responde 500, bajar `proyecto2-app/storage/logs/laravel.log` por FTP.
 - **pruebas** (cada push y pull request): levanta PostgreSQL, carga `database/sql/` (la base del
   correo), corre las migraciones y el seeder y luego `php artisan test`.
 - **desplegar** (solo con push a `main`, si las pruebas pasan): corre `scripts/preparar-ftp.sh`,
-  quita el `.env` y el instalador, y sube por FTP solo los archivos que cambiaron. Nunca pisa el
-  `.env` del servidor.
+  quita el `.env`, sube por FTP solo los archivos que cambiaron y llama a `instalar.php`, que
+  corre las migraciones nuevas y el seeder. Nunca pisa el `.env` del servidor ni carga `datos.sql`.
 
 Secretos del repo (*Settings → Secrets and variables → Actions*):
 
@@ -99,8 +113,11 @@ Secretos del repo (*Settings → Secrets and variables → Actions*):
 | `FTP_SERVER` | `139.99.68.169` |
 | `FTP_USERNAME` | `grupo14sa` |
 | `FTP_PASSWORD` | la contraseña del FTP |
-| `FTP_DIR` | la carpeta del grupo en el FTP, terminada en `/` (la que contiene `proyecto2/`) |
+| `FTP_DIR` | `/` (la raíz del FTP es la carpeta web del grupo) |
+| `INSTALAR_TOKEN` | el mismo valor de `INSTALAR_TOKEN` del `.env` del servidor |
 
-Flujo: rama → pull request a `develop` → pull request de `develop` a `main` → se despliega solo.
-Si la versión trae **migraciones nuevas**, subir otra vez `instalar.php` (sale en `dist-ftp/` al
-correr el script), abrirlo y borrarlo.
+Flujo: rama → pull request a `develop` → pull request de `develop` a `main` → se despliega y migra
+solo.
+
+> El FTP del servidor corta con muchas conexiones (`421 There are too many connections`). En
+> FileZilla: modo **Binario**, **1** transferencia simultánea y tiempo de espera de 60 s.
