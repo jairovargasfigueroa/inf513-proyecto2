@@ -40,6 +40,10 @@ perl -p -e 's#^APP_ENV=.*#APP_ENV=production#; s#^APP_DEBUG=.*#APP_DEBUG=false#;
     -e "s#^APP_KEY=.*#APP_KEY=$CLAVE#; s#^APP_URL=.*#APP_URL=https://www.tecnoweb.org.bo$BASE_PATH#; s#^ASSET_URL=.*#ASSET_URL=$BASE_PATH#; s#^VITE_BASE_PATH=.*#VITE_BASE_PATH=$BASE_PATH#;" \
     .env.example > .env
 
+# CU-09: la clave de prueba de Stripe se toma del .env local, si está.
+STRIPE="$(grep -E '^STRIPE_SECRET=sk_test_' "$RAIZ/.env" 2>/dev/null | cut -d= -f2- || true)"
+[ -n "$STRIPE" ] && perl -pi -e "s#^STRIPE_SECRET=.*#STRIPE_SECRET=$STRIPE#" .env
+
 # Instalador de un solo uso (migrate y seed dentro del servidor, que es el único que llega a la base).
 TOKEN="$(openssl rand -hex 24)"
 printf '\nINSTALAR_TOKEN=%s\n' "$TOKEN" >> .env
